@@ -8,14 +8,12 @@ export const LandingPage = () => {
   const { connected } = useWallet();
   const navigate = useNavigate();
 
-  // 1. Redirect intelligente: se l'utente connette il wallet, va alla dashboard
   useEffect(() => {
     if (connected) {
       navigate('/dashboard');
     }
   }, [connected, navigate]);
 
-  // 2. Rilevamento del browser per UX personalizzata
   useEffect(() => {
     const userAgent = navigator.userAgent;
     if (userAgent.match(/firefox|fxios/i)) setBrowser('Firefox');
@@ -27,104 +25,105 @@ export const LandingPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-white flex flex-col font-sans overflow-hidden">
+    <div className="min-h-screen bg-background text-white font-sans overflow-y-auto">
       
-      {/* HEADER: Solo navigazione e Login */}
-      <header className="flex justify-end items-center p-6 absolute top-0 w-full z-50">
-        <div className="flex items-center gap-4 bg-gray-900/80 p-2 rounded-2xl backdrop-blur-sm border border-gray-800">
-          <span className="text-sm text-gray-400 font-medium hidden sm:block">Già utente?</span>
-          <WalletMultiButton className="!bg-[#6366f1] hover:!bg-[#4f46e5] !rounded-xl !h-10 transition-all" />
-        </div>
+      {/* HEADER */}
+      <header className="flex justify-between items-center p-6 w-full z-50">
+        <div className="font-black text-2xl tracking-tighter text-yellow-500">MS.</div>
+        <WalletMultiButton className="!bg-yellow-500 hover:!bg-yellow-400 !text-black !font-black !rounded-xl !h-10 transition-all" />
       </header>
 
-      {/* MAIN CONTENT: Layout Diviso (Split Screen) */}
-      <main className="flex-1 flex flex-col lg:flex-row relative pt-24">
+      {/* SEZIONE 1: HERO */}
+      <main className="max-w-7xl mx-auto px-6 pt-12 pb-24 flex flex-col lg:flex-row items-center gap-12 relative">
         
-        {/* COLONNA SINISTRA: La proposta di valore */}
-        <div className="flex-1 flex flex-col justify-center p-8 lg:p-20 z-10">
-          <div className="flex items-center mb-8">
-            <img 
-              src="/meme.jpg" 
-              alt="Meme Saver Logo" 
-              className="w-20 h-20 rounded-full mr-4 border-2 border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.3)] object-cover"
-            />
-            <div className="flex flex-col">
-              <h1 className="text-3xl font-black tracking-tight text-white leading-none">
-                MEME SAVER
-              </h1>
-              <span className="text-orange-400 font-bold tracking-wide mt-1 text-sm uppercase">
-                Your Trading Helper
-              </span>
-            </div>
+        {/* Colonna Sinistra */}
+        <div className="flex-1 flex flex-col justify-center items-center lg:items-start text-center lg:text-left z-10">
+          <div className="inline-block bg-yellow-500/10 border-2 border-yellow-500 text-yellow-500 font-bold px-4 py-1 rounded-full mb-6 transform -rotate-2">
+            🚨 IL RADAR DEFINITIVO PER SOLANA
           </div>
-
-          <h2 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-            Proteggi i tuoi trade. <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
-              Evita i Rug Pulls.
-            </span>
-          </h2>
           
-          <p className="text-xl text-gray-400 mb-10 max-w-lg">
-            Lo strumento definitivo per cecchinare i token on-chain. Analizza, entra prima degli altri e monitora la liquidità direttamente dal tuo browser.
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-4 leading-none uppercase">
+            Smetti <br /> di farti <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">Ruggare.</span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-gray-300 font-bold mb-8 max-w-lg">
+            Scansiona i token, evita gli scam e snippa prima della massa. Direttamente dal tuo browser. 🦍
           </p>
 
-          <div>
-            <button className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white bg-gradient-to-r from-orange-500 to-red-600 rounded-xl hover:scale-105 transition-all duration-200 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_40px_rgba(249,115,22,0.5)] cursor-pointer">
-              <svg className="w-6 h-6 mr-3 transition-transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-              <span className="text-lg">Aggiungi a {browser} - Gratis</span>
-            </button>
-            <p className="mt-4 text-sm text-gray-500 font-mono">
-               +10,000 installazioni attive su {browser}
-            </p>
-          </div>
+          <button className="group relative inline-flex items-center justify-center px-8 py-5 font-black text-black bg-yellow-500 rounded-2xl hover:scale-105 transition-all duration-200 shadow-[0_0_30px_rgba(234,179,8,0.4)] text-xl uppercase tracking-wider">
+            Scimmia Dentro Ora
+            <span className="ml-3 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
+          <p className="mt-4 text-sm text-gray-500 font-mono font-bold">
+            Disponibile gratis per {browser}
+          </p>
         </div>
 
-        {/* COLONNA DESTRA: La Social Proof (Grafici/Leaderboard) */}
-        <div className="flex-1 relative flex items-center justify-center p-8 lg:p-20">
-          {/* Effetto sfondo luminoso per la colonna destra */}
-          <div className="absolute inset-0 bg-gradient-to-bl from-indigo-900/20 to-transparent"></div>
+        {/* Colonna Destra: L'ESTENSIONE INTERATTIVA */}
+        <div className="flex-1 w-full max-w-sm relative">
+          <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full"></div>
           
-          {/* Card contenitore per le classifiche future */}
-          <div className="relative w-full max-w-md aspect-[4/5] bg-gray-900/60 backdrop-blur-xl border border-gray-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col p-6">
+          <div className="relative bg-[#111] rounded-[2rem] border-4 border-gray-800 shadow-2xl overflow-hidden flex flex-col h-[550px]">
+            <div className="bg-gray-900 p-3 flex justify-center items-center border-b border-gray-800 shrink-0">
+              <div className="w-10 h-1 text-[10px] bg-gray-700 rounded-full"></div>
+            </div>
             
-            <div className="border-b border-gray-800 pb-4 mb-4 flex justify-between items-center">
-              <h3 className="text-lg font-bold text-gray-200">🚀 Live Top Snipes</h3>
-              <span className="flex h-3 w-3 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-              </span>
+            <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide">
+              <img 
+                src="/screenshot.png" 
+                alt="Meme Saver Interface" 
+                className="w-full h-auto"
+              />
             </div>
-
-            {/* Elemento finto della classifica per dare l'idea */}
-            <div className="flex-1 flex flex-col gap-3">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className="bg-gray-800/50 rounded-xl p-4 flex items-center justify-between border border-gray-700/50 hover:bg-gray-800 transition">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold">
-                      T{item}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-200">Trader_0x{item}a...b9</p>
-                      <p className="text-xs text-gray-400">Su token $SHIB2</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-green-400 font-bold">+{120 * item}%</p>
-                    <p className="text-xs text-gray-500">12 min fa</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Sfumatura in basso per far sembrare che la lista continui */}
-            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-900 to-transparent"></div>
           </div>
         </div>
-
       </main>
+
+      {/* SEZIONE 2: ALTRI SCREENSHOTS */}
+      <section className="bg-[#0a0a0a] border-y border-gray-800 py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-black text-center mb-16 uppercase">Come ti salviamo il portafoglio</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-[#111] border border-gray-800 rounded-2xl p-4 transform hover:-translate-y-2 transition-transform">
+              <div className="aspect-video bg-gray-900 rounded-xl mb-4 flex items-center justify-center border border-gray-800 overflow-hidden">
+                <span className="text-gray-600 font-mono text-sm">Spazio Screenshot 1</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Radar in Tempo Reale</h3>
+              <p className="text-gray-500 text-sm">Intercetta i lanci su Pump.fun prima che arrivino su Raydium.</p>
+            </div>
+
+            <div className="bg-[#111] border border-gray-800 rounded-2xl p-4 transform hover:-translate-y-2 transition-transform">
+              <div className="aspect-video bg-gray-900 rounded-xl mb-4 flex items-center justify-center border border-gray-800 overflow-hidden">
+                <span className="text-gray-600 font-mono text-sm">Spazio Screenshot 2</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Analisi Algoritmica</h3>
+              <p className="text-gray-500 text-sm">Scopri all'istante se il dev ha bloccato la liquidity o se è uno scam.</p>
+            </div>
+
+            <div className="bg-[#111] border border-gray-800 rounded-2xl p-4 transform hover:-translate-y-2 transition-transform">
+              <div className="aspect-video bg-gray-900 rounded-xl mb-4 flex items-center justify-center border border-gray-800 overflow-hidden">
+                <span className="text-gray-600 font-mono text-sm">Spazio Screenshot 3</span>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Auto-Sniper</h3>
+              <p className="text-gray-500 text-sm">Imposta il tuo slippage e lascia che il bot compri per te in millisecondi.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SEZIONE 3: PLACEHOLDER VIDEO */}
+      <section className="py-24 max-w-5xl mx-auto px-6 text-center">
+        <h2 className="text-4xl font-black mb-8 uppercase text-yellow-500">Guarda il bot in azione</h2>
+        <div className="w-full aspect-video bg-[#111] border-2 border-dashed border-gray-800 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-yellow-500 transition-colors group">
+          <div className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[20px] border-l-black border-b-[10px] border-b-transparent ml-2"></div>
+          </div>
+          <p className="text-gray-500 font-mono font-bold">Incolla qui l'iframe di YouTube</p>
+        </div>
+      </section>
+
     </div>
   );
 };
