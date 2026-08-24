@@ -123,7 +123,63 @@ export const LandingPage = () => {
           <p className="text-gray-500 font-mono font-bold">Incolla qui l'iframe di YouTube</p>
         </div>
       </section>
+    {/* FOOTER & LEGAL POLICIES */}
+      <footer className="bg-black border-t border-gray-900 pt-16 pb-8 mt-20">
+        <div className="max-w-7xl mx-auto px-6">
+          
+          <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-12">
+            {/* Brand e Mission */}
+            <div className="md:w-1/3">
+              <div className="font-black text-2xl tracking-tighter text-yellow-500 mb-4">MS.</div>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Il terminale algoritmico avanzato per il trading su Solana. Costruito per darti un vantaggio matematico, non per garantirti profitti. 
+              </p>
+            </div>
 
+            {/* Link Legali */}
+            <div className="grid grid-cols-2 gap-12 md:w-2/3 md:justify-items-end">
+              <div>
+                <h4 className="text-white font-bold mb-4 uppercase text-sm tracking-wider">Piattaforma</h4>
+                <ul className="space-y-2 text-sm text-gray-500">
+                  <li><a href="#" className="hover:text-yellow-500 transition">Scarica Estensione</a></li>
+                  <li><a href="#" className="hover:text-yellow-500 transition">Documentazione API</a></li>
+                  <li><a href="#" className="hover:text-yellow-500 transition">Supporto</a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-white font-bold mb-4 uppercase text-sm tracking-wider">Note Legali</h4>
+                <ul className="space-y-2 text-sm text-gray-500">
+                  <li><a href="#" className="hover:text-white transition">Termini di Servizio</a></li>
+                  <li><a href="#" className="hover:text-white transition">Privacy Policy</a></li>
+                  <li><a href="#" className="hover:text-white transition">Informativa sui Cookie</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* DISCLAIMER SUI RISCHI (Il tuo vero scudo legale) */}
+          <div className="bg-[#111] border border-gray-800 rounded-xl p-6 mb-8 text-xs text-gray-400 leading-relaxed">
+            <p className="mb-2">
+              <strong className="text-gray-300">DISCLAIMER SUI RISCHI E ASSENZA DI CONSULENZA FINANZIARIA:</strong> L'estensione Meme Saver fornisce esclusivamente strumenti software e analisi basate su algoritmi. Nessuna delle informazioni o dei punteggi ("Trust Score") generati dall'Intelligenza Artificiale costituisce una consulenza finanziaria, di investimento, legale o fiscale. Il trading di criptovalute, in particolare di token a bassa capitalizzazione (memecoin) sulla rete Solana, comporta un rischio estremamente elevato e la possibilità di perdere l'intero capitale investito.
+            </p>
+            <p className="mb-2">
+              <strong className="text-gray-300">ESCLUSIONE DI RESPONSABILITÀ TECNICA:</strong> Gli algoritmi di rilevamento scam non sono infallibili e possono produrre falsi positivi o falsi negativi. Meme Saver non si assume alcuna responsabilità per perdite derivanti da "rug pull", token fraudolenti, slippage, congestione della rete RPC, latenza del nodo o errori di esecuzione degli smart contract. Le funzioni di "Auto-Sniper" agiscono secondo i parametri impostati dall'utente, il quale rimane l'unico responsabile delle transazioni firmate dal proprio wallet non-custodial (es. Phantom).
+            </p>
+            <p>
+              <strong className="text-gray-300">TUTELA DELLA PRIVACY:</strong> L'estensione non memorizza, non trasmette e non ha mai accesso alle chiavi private del tuo wallet. Tutte le analisi avvengono interrogando dati pubblici on-chain.
+            </p>
+          </div>
+
+          {/* Copyright */}
+          <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600">
+            <p>© {new Date().getFullYear()} Meme Saver. Tutti i diritti riservati.</p>
+            <p className="flex items-center gap-2">
+              Status Rete: <span className="w-2 h-2 rounded-full bg-green-500"></span> Operativa
+            </p>
+          </div>
+
+        </div>
+      </footer>
     </div>
   );
 };

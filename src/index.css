@@ -1,14 +1,9 @@
 @import "tailwindcss";
 
-/* Stile per i componenti del wallet Solana */
+/* Stili del wallet */
 @import '@solana/wallet-adapter-react-ui/styles.css';
 
-/* La tua palette personalizzata tradotta per Tailwind V4 */
-@theme {
-  --color-background: #050505;
-}
-
-/* Salvagente d'emergenza: forza il colore di base per l'intera app */
+/* Salvagente Globale Tema Scuro */
 html, body {
   background-color: #050505 !important;
   color: #f3f4f6 !important;
