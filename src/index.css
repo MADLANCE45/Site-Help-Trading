@@ -1,12 +1,28 @@
+@import '@solana/wallet-adapter-react-ui/styles.css';
 @import "tailwindcss";
 
-/* Stili del wallet */
-@import '@solana/wallet-adapter-react-ui/styles.css';
-
-/* Salvagente Globale Tema Scuro */
-html, body {
+body {
   background-color: #050505 !important;
-  color: #f3f4f6 !important;
+  color: #ededed;
+  font-family: 'Inter', system-ui, sans-serif;
   margin: 0;
-  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fix per il menu del wallet in basso */
+.wallet-adapter-dropdown-list {
+  top: auto !important;
+  bottom: 100% !important;
+  margin-bottom: 8px !important;
+  transform: translateY(0) !important;
+  z-index: 50 !important;
+}
+/* Animazione per far scorrere lo screenshot su e giù da solo */
+@keyframes pan-image {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-40%); } /* Modifica questo -40% se l'immagine è molto lunga */
+}
+
+.animate-pan-image {
+  animation: pan-image 15s ease-in-out infinite;
 }

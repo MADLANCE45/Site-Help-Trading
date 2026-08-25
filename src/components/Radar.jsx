@@ -6,7 +6,7 @@ const socket = io('http://localhost:3000');
 
 export const Radar = () => {
   const [liveTokens, setLiveTokens] = useState([]);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
     // Gestione della connessione
@@ -15,6 +15,10 @@ export const Radar = () => {
 
     // Ascolto del flusso dati dal tuo dumpRadar.js
     // Assumiamo che il tuo backend emetta un evento chiamato 'newToken'
+    // Riceve lo storico dal server appena si connette
+    socket.on('initTokens', (history) => {
+      setLiveTokens(history);
+    });
     socket.on('newToken', (tokenData) => {
       setLiveTokens((prevTokens) => {
         // Aggiungiamo il nuovo token in cima e teniamo solo gli ultimi 50 per non appesantire il browser
