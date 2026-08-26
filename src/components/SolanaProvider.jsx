@@ -7,7 +7,10 @@ import { clusterApiUrl } from '@solana/web3.js';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 export const SolanaProvider = ({ children }) => {
+    // 1. Impostiamo la rete su Devnet (Soldi finti per i test)
     const network = WalletAdapterNetwork.Devnet;
+    
+    // 2. Creiamo il ponte di connessione in modo ottimizzato (useMemo)
     const endpoint = useMemo(() => clusterApiUrl(network), [network]);
     const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
