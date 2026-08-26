@@ -1,108 +1,88 @@
-import React from 'react';
-
-// Dati simulati per la classifica (in futuro arriveranno dal tuo DB Supabase)
-const topBots = [
-  { id: 1, wallet: '8xK9...2aB1', strategy: 'Degen Ape', risk: 'ALTO', pnl: '+452%', winRate: '68%', active: true },
-  { id: 2, wallet: '3zM1...9cX8', strategy: 'Sniper AI', risk: 'MEDIO', pnl: '+210%', winRate: '82%', active: true },
-  { id: 3, wallet: '7yT4...1mP0', strategy: 'Safe Turtle', risk: 'BASSO', pnl: '+85%', winRate: '94%', active: true },
-  { id: 4, wallet: '1aB2...8xK9', strategy: 'Volume Hunter', risk: 'ALTO', pnl: '+64%', winRate: '55%', active: false },
-  { id: 5, wallet: '9cX8...3zM1', strategy: 'Dev Tracker', risk: 'MEDIO', pnl: '+42%', winRate: '75%', active: true },
-];
+import React, { useState } from 'react';
 
 export const Leaderboard = () => {
+  // Filtri temporali per la classifica
+  const [timeframe, setTimeframe] = useState('24h');
+
+  // Dati simulati dei migliori trader sulla piattaforma
+  const topTraders = [
+    { rank: 1, address: '7xKX...2mQ9', pnl: '+$48,290.50', roi: '+842%', winRate: '89%', status: 'PRO' },
+    { rank: 2, address: 'DezX...3u9P', pnl: '+$29,410.00', roi: '+512%', winRate: '78%', status: 'PRO' },
+    { rank: 3, address: '9WzY...8vL1', pnl: '+$18,900.20', roi: '+345%', winRate: '71%', status: 'FREE' },
+    { rank: 4, address: '3KjM...4nB2', pnl: '+$12,450.80', roi: '+210%', winRate: '65%', status: 'PRO' },
+    { rank: 5, address: 'AcV2...9kR4', pnl: '+$8,120.00', roi: '+155%', winRate: '62%', status: 'FREE' },
+  ];
+
   return (
-    <div className="flex-1 overflow-y-auto p-8 bg-background text-white">
+    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
       
-      {/* Intestazione */}
-      <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      {/* HEADER & FILTRI */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-[#222] pb-6">
         <div>
-          <h2 className="text-3xl font-black text-yellow-500 uppercase tracking-tight flex items-center gap-3">
-            🏆 Top Algo Snipers
-          </h2>
-          <p className="text-gray-400 mt-2">
-            Classifica globale dei setup migliori. Analizza i PnL e clona le strategie vincenti.
-          </p>
+          <h2 className="text-3xl font-bold text-white tracking-tight">Global Leaderboard</h2>
+          <p className="text-gray-400 text-sm mt-1">Top performing wallets tracked by Meme Saver AI.</p>
         </div>
-        <div className="bg-[#111] px-4 py-2 rounded-lg border border-gray-800 text-sm font-mono text-gray-400">
-          Stagione Attuale: <span className="text-white font-bold">Agosto 2026</span>
+        
+        {/* Selettore Timeframe */}
+        <div className="flex bg-black border border-[#222] p-1 rounded-xl">
+          {['24h', '7d', '30d', 'All Time'].map((tf) => (
+            <button
+              key={tf}
+              onClick={() => setTimeframe(tf)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                timeframe === tf 
+                  ? 'bg-[#222] text-white shadow-md' 
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              {tf}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Tabella Classifica */}
-      <div className="bg-[#0a0a0a] rounded-2xl border border-gray-800 overflow-hidden shadow-2xl relative">
-        {/* Glow effect di sfondo */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-32 bg-yellow-500/5 blur-[80px] pointer-events-none"></div>
-
-        <table className="w-full text-left border-collapse relative z-10">
-          <thead>
-            <tr className="bg-[#111]/50 border-b border-gray-800 text-xs font-bold text-gray-500 uppercase tracking-wider">
-              <th className="p-4 w-16 text-center">Rank</th>
-              <th className="p-4">Trader / Wallet</th>
-              <th className="p-4">Nome Strategia</th>
-              <th className="p-4 text-center">Rischio IA</th>
-              <th className="p-4 text-right">Win Rate</th>
-              <th className="p-4 text-right">Total PnL</th>
-              <th className="p-4 text-center">Azione</th>
-            </tr>
-          </thead>
-          <tbody className="text-sm font-mono">
-            {topBots.map((bot, index) => (
-              <tr 
-                key={bot.id} 
-                className={`border-b border-gray-800/50 hover:bg-[#111] transition-colors group ${
-                  index === 0 ? 'bg-yellow-500/5' : ''
-                }`}
-              >
-                {/* Posizione (Podio colorato) */}
-                <td className="p-4 text-center font-black text-lg">
-                  {index === 0 && <span className="text-yellow-500">1</span>}
-                  {index === 1 && <span className="text-gray-300">2</span>}
-                  {index === 2 && <span className="text-amber-600">3</span>}
-                  {index > 2 && <span className="text-gray-600">{index + 1}</span>}
-                </td>
-
-                {/* Wallet */}
-                <td className="p-4 flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${bot.active ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-gray-600'}`}></div>
-                  <span className="text-gray-300">{bot.wallet}</span>
-                </td>
-
-                {/* Strategia */}
-                <td className="p-4 font-sans font-bold text-white">
-                  {bot.strategy}
-                </td>
-
-                {/* Rischio */}
-                <td className="p-4 text-center">
-                  <span className={`px-2 py-1 rounded text-xs font-bold border ${
-                    bot.risk === 'BASSO' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
-                    bot.risk === 'MEDIO' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
-                    'bg-red-500/10 text-red-500 border-red-500/20'
-                  }`}>
-                    {bot.risk}
-                  </span>
-                </td>
-
-                {/* Win Rate */}
-                <td className="p-4 text-right text-gray-400">
-                  {bot.winRate}
-                </td>
-
-                {/* PnL */}
-                <td className="p-4 text-right font-black text-green-400 text-base tracking-tight">
-                  {bot.pnl}
-                </td>
-
-                {/* Bottone Clona */}
-                <td className="p-4 text-center">
-                  <button className="opacity-0 group-hover:opacity-100 px-4 py-2 bg-[#111] hover:bg-yellow-500 hover:text-black border border-gray-700 hover:border-yellow-500 text-gray-300 font-sans font-bold text-xs rounded-lg transition-all duration-200">
-                    CLONA SETUP
-                  </button>
-                </td>
+      {/* TABELLA CLASSIFICA */}
+      <div className="bg-black border border-[#222] rounded-2xl overflow-hidden shadow-2xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-[#222] bg-[#0a0a0a] text-gray-500 text-xs font-bold uppercase tracking-wider">
+                <th className="p-5">Rank</th>
+                <th className="p-5">Wallet Address</th>
+                <th className="p-5">Net PnL</th>
+                <th className="p-5">ROI</th>
+                <th className="p-5">Win Rate</th>
+                <th className="p-5 text-right">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[#111] text-sm font-medium">
+              {topTraders.map((trader) => (
+                <tr key={trader.rank} className="hover:bg-[#0a0a0a] transition-colors group">
+                  <td className="p-5 font-black text-gray-400 group-hover:text-white">
+                    {trader.rank === 1 ? '🥇 01' : trader.rank === 2 ? '🥈 02' : trader.rank === 3 ? '🥉 03' : `0${trader.rank}`}
+                  </td>
+                  <td className="p-5 font-mono text-gray-300 flex items-center gap-2">
+                    {trader.address}
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${trader.status === 'PRO' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-gray-800 text-gray-400'}`}>
+                      {trader.status}
+                    </span>
+                  </td>
+                  <td className="p-5 font-bold text-emerald-400">{trader.pnl}</td>
+                  <td className="p-5 font-bold text-white">{trader.roi}</td>
+                  <td className="p-5 text-gray-300">{trader.winRate}</td>
+                  <td className="p-5 text-right">
+                    <button 
+                      onClick={() => alert(`In futuro qui potrai copiare la strategia di ${trader.address} con un click!`)}
+                      className="px-4 py-2 bg-[#111] hover:bg-[#222] text-gray-300 border border-[#333] rounded-lg text-xs font-bold transition-all hover:border-blue-500"
+                    >
+                      Copy Strategy
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>

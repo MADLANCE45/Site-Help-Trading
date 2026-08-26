@@ -1,113 +1,151 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
-// Connessione diretta al tuo Server Radar Node.js
-const socket = io('http://localhost:3000');
-
 export const Radar = () => {
   const [liveTokens, setLiveTokens] = useState([]);
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [selectedToken, setSelectedToken] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Gestione della connessione
-    socket.on('connect', () => setIsConnected(true));
-    socket.on('disconnect', () => setIsConnected(false));
-
-    // Ascolto del flusso dati dal tuo dumpRadar.js
-    // Assumiamo che il tuo backend emetta un evento chiamato 'newToken'
-    // Riceve lo storico dal server appena si connette
-    socket.on('initTokens', (history) => {
-      setLiveTokens(history);
-    });
+    const socket = io('http://localhost:3000');
     socket.on('newToken', (tokenData) => {
-      setLiveTokens((prevTokens) => {
-        // Aggiungiamo il nuovo token in cima e teniamo solo gli ultimi 50 per non appesantire il browser
-        const updated = [tokenData, ...prevTokens];
-        return updated.slice(0, 50);
-      });
+      setLiveTokens((prev) => [tokenData, ...prev].slice(0, 50));
     });
-
-    // Pulizia quando si cambia pagina
-    return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('newToken');
-    };
+    return () => socket.disconnect();
   }, []);
 
+  const handleCopy = (address) => {
+    navigator.clipboard.writeText(address);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleTokenClick = async (token) => {
+    setIsScanning(true);
+    setSelectedToken({
+      ...token, trustScore: 0, status: 'SCANNING...', judgment: 'Interrogazione nodi Helius in corso...',
+      supplyIntegrity: 0, devTrust: 0, sybilResistance: 0, microDumpRisk: 0
+    });
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/scan/${token.address}`);
+      const scanResult = await response.json();
+
+      if (response.ok) {
+        setSelectedToken({
+          ...token, trustScore: scanResult.trustScore, status: scanResult.status,
+          judgment: scanResult.judgment, supplyIntegrity: scanResult.supplyIntegrity,
+          devTrust: scanResult.devTrust, sybilResistance: scanResult.sybilResistance, microDumpRisk: scanResult.microDumpRisk
+        });
+      } else {
+        // IL FIX: Se Helius va in errore (es. token finto), sblocca l'interfaccia
+        setSelectedToken({
+          ...token, trustScore: 0, status: 'ERROR',
+          judgment: 'Errore API: Impossibile scansionare questo token. Dati on-chain assenti.',
+          supplyIntegrity: 0, devTrust: 0, sybilResistance: 0, microDumpRisk: 100
+        });
+      }
+    } catch (err) {
+      setSelectedToken({
+        ...token, trustScore: 0, status: 'NETWORK ERROR',
+        judgment: 'Server offline o errore di connessione.',
+        supplyIntegrity: 0, devTrust: 0, sybilResistance: 0, microDumpRisk: 100
+      });
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-background">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Header del Radar */}
-        <div className="flex justify-between items-end mb-8">
-          <div>
-            <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-              📡 Live On-Chain Radar
-            </h2>
-            <p className="text-gray-400 mt-1">Intercettazione token in tempo reale dalla mempool di Solana.</p>
+    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8 h-full">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-[#222] pb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-white tracking-tight">Radar & Auto-Sniper</h2>
+          <p className="text-gray-400 text-sm mt-1">Real-time Solana Memecoin Index monitoring.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* COLONNA SINISTRA */}
+        <div className="lg:col-span-1 bg-black border border-[#222] rounded-xl overflow-hidden flex flex-col h-[600px]">
+          <div className="p-4 border-b border-[#222] bg-[#0a0a0a]">
+            <h3 className="font-semibold text-white">Live Pairs</h3>
           </div>
-          
-          {/* Badge di Connessione */}
-          <div className={`px-4 py-2 rounded-xl flex items-center gap-2 border ${isConnected ? 'bg-green-500/10 border-green-500/30' : 'bg-red-500/10 border-red-500/30'}`}>
-            <span className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
-            <span className={`text-sm font-bold ${isConnected ? 'text-green-400' : 'text-red-400'}`}>
-              {isConnected ? 'Server Radar Connesso' : 'Server Disconnesso'}
-            </span>
+          <div className="flex-1 overflow-y-auto p-2 space-y-2">
+            {liveTokens.length === 0 ? (
+              <div className="text-center text-gray-500 text-sm mt-10">Ascoltando la rete...</div>
+            ) : (
+              liveTokens.map((t, i) => (
+                <div key={i} onClick={() => handleTokenClick(t)} className="p-4 rounded-lg bg-[#111] border border-[#333] cursor-pointer hover:bg-[#1a1a1a]">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-white">${t.symbol}</span>
+                  </div>
+                  <div className="text-xs text-gray-500 font-mono truncate">{t.address}</div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
-        {/* Tabella Dati Live */}
-        <div className="bg-[#111] border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-[#0a0a0a] border-b border-gray-800 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                  <th className="p-4">Time</th>
-                  <th className="p-4">Token</th>
-                  <th className="p-4">Liquidità Iniziale</th>
-                  <th className="p-4 text-center">Trust Score (IA)</th>
-                  <th className="p-4 text-right">Azione</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm font-mono divide-y divide-gray-800/50">
-                {liveTokens.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="p-8 text-center text-gray-500 italic">
-                      In attesa di nuovi contratti dalla blockchain...
-                    </td>
-                  </tr>
-                ) : (
-                  liveTokens.map((token, idx) => (
-                    <tr key={idx} className="hover:bg-white/5 transition-colors animate-fade-in">
-                      <td className="p-4 text-gray-400">{new Date(token.timestamp).toLocaleTimeString()}</td>
-                      <td className="p-4 font-bold text-white flex items-center gap-2">
-                        {token.symbol}
-                        <span className="text-xs text-gray-600 font-normal">{token.address.substring(0,6)}...</span>
-                      </td>
-                      <td className="p-4 text-blue-400 font-bold">{token.liquidity} SOL</td>
-                      <td className="p-4 text-center">
-                        <span className={`px-2 py-1 rounded text-xs font-bold border ${
-                          token.trustScore > 70 ? 'bg-green-500/10 text-green-500 border-green-500/20' :
-                          token.trustScore > 40 ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' :
-                          'bg-red-500/10 text-red-500 border-red-500/20'
-                        }`}>
-                          {token.trustScore}/100
-                        </span>
-                      </td>
-                      <td className="p-4 text-right">
-                        <button className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg transition-colors">
-                          SNIPE
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        {/* COLONNA DESTRA */}
+        <div className="lg:col-span-2 bg-[#050505] border border-[#222] rounded-xl p-8 relative shadow-2xl min-h-[600px] flex flex-col">
+          {!selectedToken ? (
+            <div className="flex-1 flex flex-col items-center justify-center opacity-50">
+              <span className="text-4xl mb-4">📡</span>
+              <h3 className="text-xl font-bold text-white">Awaiting Target</h3>
+            </div>
+          ) : (
+            <div className="relative z-10 flex-1">
+              <div className="flex items-center justify-between mb-10">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#111] border border-[#333] flex items-center justify-center">
+                    {isScanning ? '⏳' : selectedToken.status === 'ERROR' ? '❌' : '🛡️'}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-white flex items-center gap-3">
+                      ${selectedToken.symbol}
+                      {/* TASTO COPY ADDRESS */}
+                      <button 
+                        onClick={() => handleCopy(selectedToken.address)}
+                        className="text-xs px-2 py-1 bg-[#222] hover:bg-[#333] border border-[#444] rounded text-gray-300 transition-all flex items-center gap-1"
+                      >
+                        {copied ? '✅ Copied' : '📄 Copy'}
+                      </button>
+                    </h3>
+                    <p className="text-gray-500 text-sm font-mono mt-1">{selectedToken.address}</p>
+                  </div>
+                </div>
+                <a href={`https://dexscreener.com/solana/${selectedToken.address}`} target="_blank" rel="noopener noreferrer" className="px-6 py-2 bg-[#111] text-gray-300 font-bold text-sm rounded-lg border border-[#333]">
+                  DexScreener ↗
+                </a>
+              </div>
 
+              {/* CERCHIO E GIUDIZIO */}
+              <div className="flex flex-col md:flex-row items-center gap-8 mb-12 p-6 bg-black border border-[#222] rounded-2xl">
+                <div className="relative w-32 h-32 flex items-center justify-center">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" stroke="#222" strokeWidth="8" fill="none" />
+                    <circle cx="50" cy="50" r="40" stroke={isScanning ? '#3b82f6' : selectedToken.trustScore > 60 ? '#34d399' : '#f43f5e'} strokeWidth="8" fill="none" strokeDasharray="251.2" strokeDashoffset={251.2 - (251.2 * selectedToken.trustScore) / 100} className="transition-all duration-1000" />
+                  </svg>
+                  <div className="absolute flex flex-col items-center">
+                    <span className="text-3xl font-black text-white">{isScanning ? '...' : selectedToken.trustScore}</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-gray-500 tracking-widest mb-3 uppercase">Algorithmic Judgment</div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className={`px-3 py-1 border font-bold text-sm rounded-md ${isScanning ? 'text-blue-500 border-blue-500/30' : selectedToken.status === 'SAFE' ? 'text-emerald-500 border-emerald-500/30' : 'text-rose-500 border-rose-500/30'}`}>
+                      {selectedToken.status}
+                    </span>
+                    <span className="text-gray-300 font-medium">{selectedToken.judgment}</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -40,6 +40,9 @@ export const AppLayout = ({ children }) => {
           <button onClick={() => navigate('/dashboard/leaderboard')} className={navItemClass('/dashboard/leaderboard')}>
             <span className="text-lg">🏆</span> Leaderboard
           </button>
+          <button onClick={() => navigate('/dashboard/wallet')} className={navItemClass('/dashboard/wallet')}>
+            <span className="text-lg">💳</span> Wallet & Pro
+          </button>
         </nav>
 
         <div className="p-4 border-t border-[#222]">
