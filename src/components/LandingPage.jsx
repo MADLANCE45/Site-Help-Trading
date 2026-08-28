@@ -24,8 +24,15 @@ const LandingPage = () => {
           </div>
 
           <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400">
-            <a href="#features" className="hover:text-white transition-colors">Funzionalità</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Piani & Pro</a>
+            {/* L'ancora #features ora funzionerà perché stiamo per creare la sezione */}
+            <a href="#features" className="hover:text-white transition-colors cursor-pointer">Funzionalità</a>
+            {/* Navigazione diretta alla pagina dei piani */}
+            <span 
+              onClick={() => navigate('/dashboard/pricing')} 
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Piani & Pro
+            </span>
           </div>
           
           <div className="flex items-center gap-4">
@@ -127,6 +134,81 @@ const LandingPage = () => {
           <div className="text-xl font-black tracking-widest uppercase">DexScreener</div>
           <div className="text-xl font-black tracking-widest uppercase">Raydium</div>
           <div className="text-xl font-black tracking-widest uppercase">Solana</div>
+          {/* SEZIONE FUNZIONALITÀ & VIDEO (Il vero gancio di vendita) */}
+      <section id="features" className="py-32 px-6 bg-[#020202] relative">
+        <div className="max-w-7xl mx-auto">
+          
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
+              Smetti di fare trading alla cieca.
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Guarda come il nostro Radar analizza la supply e scopre le reti Sybil dei Developer prima che tu prema il tasto Buy.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            
+            {/* BOX VIDEO */}
+            <div className="relative rounded-2xl overflow-hidden border border-[#222] bg-[#0a0a0a] aspect-video flex items-center justify-center group shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+              {/* Sfondo sfocato temporaneo (Sostituirai questo div con un <video> o <iframe> di YouTube) */}
+              <div className="absolute inset-0 bg-[url('/screenshot.png')] bg-cover bg-top opacity-20 group-hover:opacity-10 transition-opacity"></div>
+              
+              {/* Tasto Play Grafico */}
+              <div className="relative z-10 w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(37,99,235,0.5)]">
+                <span className="text-3xl translate-x-1 text-white">▶</span>
+              </div>
+              
+              {/* Etichetta Video */}
+              <div className="absolute bottom-4 left-4 text-xs font-bold text-gray-300 bg-black/60 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-md">
+                Meme Saver in Azione (1:24)
+              </div>
+            </div>
+
+            {/* BULLET POINTS FUNZIONALITÀ */}
+            <div className="space-y-10">
+              
+              <div className="flex gap-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl">🕵️‍♂️</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Micro-Dumping Detector</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Traccia i movimenti silenti dei wallet collegati al Dev. L'algoritmo rileva quando la liquidità viene frammentata e venduta di nascosto per simulare volume organico.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-12 h-12 rounded-xl bg-emerald-600/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl">⚖️</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Trust Score Istanraneo</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Naviga su Pump.fun o DexScreener. Il nostro pannello laterale genera un punteggio da 1 a 100 in tempo reale basato su oltre 12 metriche di sicurezza on-chain.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-12 h-12 rounded-xl bg-amber-600/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl">📦</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Bundle Supply Shield</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Scopri istantaneamente se il Dev ha comprato la propria supply nello stesso blocco di lancio usando Jito, preparandosi a svuotare il pool sui retail.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
         </div>
       </section>
 

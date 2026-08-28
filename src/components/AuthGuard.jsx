@@ -39,13 +39,14 @@ export const AuthGuard = ({ children }) => {
         .single();
 
       // 3. Se l'utente NON esiste, lo creiamo regalandogli 5 scansioni
+      // 3. Se l'utente NON esiste, lo creiamo con il piano free
       if (!user) {
         const { error: insertError } = await supabase
           .from('users')
           .insert([{ 
             wallet_address: walletAddress,
             scans_remaining: 5,
-            is_pro: false
+            plan_type: 'free' // 🔥 Modificato: non più is_pro
           }]);
 
         if (insertError) throw insertError;

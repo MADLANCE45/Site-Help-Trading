@@ -91,17 +91,15 @@ export const WalletProfile = () => {
       const expirationDate = new Date(Date.now() + daysToAdd * 24 * 60 * 60 * 1000).toISOString();
 
       try {
-        const { error } = await supabase
-          .from('users')
-          .upsert({ 
-            wallet_address: publicKey.toString(),
-            is_pro: true, 
-            plan_type: selectedPlan, // Salva 'pro' o 'premium'
-            pro_expires_at: expirationDate,
-            sync_key: newSyncKey 
-          }, { 
-            onConflict: 'wallet_address'
-          });
+        // 🔥 ADDIO is_pro: true, BENVENUTO plan_type
+      const { error } = await supabase
+        .from('users')
+        .upsert({ 
+          wallet_address: publicKey.toString(), 
+          plan_type: 'pro', // <-- INSERISCI 'pro' OPPURE 'premium' IN BASE A COSA HANNO COMPRATO
+          pro_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          sync_key: newSyncKey
+        }, { onConflict: 'wallet_address' });
 
         if (error) throw error;
       } catch (dbErr) {
