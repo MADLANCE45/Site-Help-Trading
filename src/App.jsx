@@ -12,6 +12,7 @@ import DashboardOverview from './components/Dashboard';
 import Radar from './components/Radar';
 import Leaderboard from './components/Leaderboard';
 import WalletProfile from './components/WalletProfile';
+import Pricing from './components/Pricing';
 function App() {
   return (
     <SolanaProvider>
@@ -25,8 +26,10 @@ function App() {
           <Route path="/dashboard/radar" element={<AppLayout><Radar /></AppLayout>} />
           <Route path="/dashboard/leaderboard" element={<AppLayout><Leaderboard /></AppLayout>} />
           <Route path="/dashboard/wallet" element={<AppLayout><WalletProfile /></AppLayout>} />
+          
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/dashboard/pricing" element={<AppLayout><Pricing /></AppLayout>} />
         </Routes>
       </Router>
     </SolanaProvider>
