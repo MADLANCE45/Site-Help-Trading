@@ -24,7 +24,7 @@ export const Radar = () => {
   const handleTokenClick = async (token) => {
     setIsScanning(true);
     setSelectedToken({
-      ...token, trustScore: 0, status: 'SCANNING...', judgment: 'Interrogazione nodi Helius in corso...',
+      ...token, trustScore: 0, status: 'SCANNING...', judgment: 'Querying Helius nodes...',
       supplyIntegrity: 0, devTrust: 0, sybilResistance: 0, microDumpRisk: 0
     });
 
@@ -39,17 +39,16 @@ export const Radar = () => {
           devTrust: scanResult.devTrust, sybilResistance: scanResult.sybilResistance, microDumpRisk: scanResult.microDumpRisk
         });
       } else {
-        // IL FIX: Se Helius va in errore (es. token finto), sblocca l'interfaccia
         setSelectedToken({
           ...token, trustScore: 0, status: 'ERROR',
-          judgment: 'Errore API: Impossibile scansionare questo token. Dati on-chain assenti.',
+          judgment: 'API Error: Unable to scan this token. Missing on-chain data.',
           supplyIntegrity: 0, devTrust: 0, sybilResistance: 0, microDumpRisk: 100
         });
       }
     } catch (err) {
       setSelectedToken({
         ...token, trustScore: 0, status: 'NETWORK ERROR',
-        judgment: 'Server offline o errore di connessione.',
+        judgment: 'Server offline or connection error.',
         supplyIntegrity: 0, devTrust: 0, sybilResistance: 0, microDumpRisk: 100
       });
     } finally {
@@ -72,9 +71,14 @@ export const Radar = () => {
           <div className="p-4 border-b border-[#222] bg-[#0a0a0a]">
             <h3 className="font-semibold text-white">Live Pairs</h3>
           </div>
-          <div className="flex-1 overflow-y-auto p-2 space-y-2">
+          <div className="flex-1 overflow-y-auto p-2 space-y-2 relative">
+            {/* OVERLAY IN COSTRUZIONE PER LA LISTA (Opzionale, ma coerente) */}
+            <div className="absolute inset-0 z-10 bg-black/50 backdrop-blur-[2px] flex items-center justify-center">
+                <span className="bg-[#111] border border-[#333] text-gray-400 text-xs px-3 py-1.5 rounded-md font-mono uppercase tracking-widest">Feed Paused</span>
+            </div>
+
             {liveTokens.length === 0 ? (
-              <div className="text-center text-gray-500 text-sm mt-10">Ascoltando la rete...</div>
+              <div className="text-center text-gray-600 text-sm mt-10 font-mono">Listening to network...</div>
             ) : (
               liveTokens.map((t, i) => (
                 <div key={i} onClick={() => handleTokenClick(t)} className="p-4 rounded-lg bg-[#111] border border-[#333] cursor-pointer hover:bg-[#1a1a1a]">
@@ -91,9 +95,20 @@ export const Radar = () => {
         {/* COLONNA DESTRA */}
         <div className="lg:col-span-2 bg-[#050505] border border-[#222] rounded-xl p-8 relative shadow-2xl min-h-[600px] flex flex-col">
           {!selectedToken ? (
-            <div className="flex-1 flex flex-col items-center justify-center opacity-50">
-              <span className="text-4xl mb-4">📡</span>
-              <h3 className="text-xl font-bold text-white">Awaiting Target</h3>
+            // SCHERMATA UNDER CONSTRUCTION
+            <div className="flex-1 flex flex-col items-center justify-center opacity-60">
+              <div className="w-24 h-24 bg-[#111] border border-[#333] rounded-3xl flex items-center justify-center mb-6 shadow-inner relative overflow-hidden">
+                {/* Strisce stile cantiere in CSS */}
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, #ffaa00 10px, #ffaa00 20px)' }}></div>
+                <span className="text-4xl relative z-10 grayscale">🚧</span>
+              </div>
+              <h3 className="text-2xl font-black text-gray-300 uppercase tracking-widest mb-3">Module Offline</h3>
+              <p className="text-gray-500 text-sm max-w-sm text-center leading-relaxed">
+                The Live Radar and Auto-Sniper engine is currently undergoing core upgrades. We are deploying the new Jito MEV protection layer.
+              </p>
+              <div className="mt-8 px-4 py-2 border border-[#333] rounded-lg bg-[#0a0a0a] text-xs font-mono text-gray-600 uppercase">
+                Status: Maintenance
+              </div>
             </div>
           ) : (
             <div className="relative z-10 flex-1">
@@ -116,7 +131,7 @@ export const Radar = () => {
                     <p className="text-gray-500 text-sm font-mono mt-1">{selectedToken.address}</p>
                   </div>
                 </div>
-                <a href={`https://dexscreener.com/solana/${selectedToken.address}`} target="_blank" rel="noopener noreferrer" className="px-6 py-2 bg-[#111] text-gray-300 font-bold text-sm rounded-lg border border-[#333]">
+                <a href={`https://dexscreener.com/solana/${selectedToken.address}`} target="_blank" rel="noopener noreferrer" className="px-6 py-2 bg-[#111] text-gray-300 font-bold text-sm rounded-lg border border-[#333] hover:bg-[#222] transition-colors">
                   DexScreener ↗
                 </a>
               </div>
@@ -135,7 +150,7 @@ export const Radar = () => {
                 <div>
                   <div className="text-xs font-bold text-gray-500 tracking-widest mb-3 uppercase">Algorithmic Judgment</div>
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className={`px-3 py-1 border font-bold text-sm rounded-md ${isScanning ? 'text-blue-500 border-blue-500/30' : selectedToken.status === 'SAFE' ? 'text-emerald-500 border-emerald-500/30' : 'text-rose-500 border-rose-500/30'}`}>
+                    <span className={`px-3 py-1 border font-bold text-sm rounded-md ${isScanning ? 'text-blue-500 border-blue-500/30 bg-blue-500/10' : selectedToken.status === 'SAFE' ? 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10' : 'text-rose-500 border-rose-500/30 bg-rose-500/10'}`}>
                       {selectedToken.status}
                     </span>
                     <span className="text-gray-300 font-medium">{selectedToken.judgment}</span>

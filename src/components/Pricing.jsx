@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Pricing = () => {
   const navigate = useNavigate();
-  // Toggle per switchare tra Mensile e Annuale (psicologia dell'ancoraggio)
+  // Toggle per switchare tra Mensile e Annuale
   const [isAnnual, setIsAnnual] = useState(true);
 
   return (
@@ -31,7 +31,7 @@ const Pricing = () => {
               onClick={() => setIsAnnual(!isAnnual)}
               className="relative w-16 h-8 rounded-full bg-[#111] border border-[#333] transition-colors p-1"
             >
-              <div className={`w-6 h-6 rounded-full bg-blue-500 transition-transform duration-300 ${isAnnual ? 'translate-x-8 bg-amber-500' : ''}`}></div>
+              <div className={`w-6 h-6 rounded-full transition-transform duration-300 ${isAnnual ? 'translate-x-8 bg-amber-500' : 'bg-blue-500'}`}></div>
             </button>
             <span className={`text-sm font-bold flex items-center gap-2 ${isAnnual ? 'text-white' : 'text-gray-500'}`}>
               Pay Yearly <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded uppercase tracking-wider">Save 70%</span>
@@ -72,8 +72,7 @@ const Pricing = () => {
           </div>
 
           {/* 2. PREMIUM TIER (The Anchor & Real Cash Generator) */}
-          {/* Posizionato al centro e reso più grande per guidare l'occhio */}
-          <div className="relative bg-[#050505] border border-amber-500/50 rounded-3xl p-8 h-full flex flex-col transform md:-translate-y-4 shadow-[0_0_50px_rgba(245,158,11,0.1)] z-20">
+          <div className="relative bg-[#050505] border border-amber-500/50 rounded-3xl p-8 h-full flex flex-col transform md:-translate-y-4 shadow-[0_0_50px_rgba(245,158,11,0.15)] z-20">
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-black text-xs font-black px-4 py-1 rounded-full uppercase tracking-widest">
               Most Popular
             </div>
@@ -81,19 +80,36 @@ const Pricing = () => {
             <h3 className="text-2xl font-black text-white mb-2">Institutional</h3>
             <p className="text-sm text-gray-400 mb-6">The ultimate unfair advantage for serious snipers.</p>
             
-            <div className="mb-8">
+            <div className="mb-6">
               {isAnnual ? (
-                <div className="flex items-end gap-2">
-                  <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">$69.90</span>
-                  <span className="text-sm text-gray-500 font-medium mb-1">/ year</span>
+                <div>
+                  <div className="flex items-end gap-2">
+                    <span className="text-2xl text-gray-500 line-through font-bold pb-1">$238.80</span>
+                    <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">$69.90</span>
+                  </div>
+                  <div className="text-sm text-gray-500 font-medium mt-1">/ year, billed annually in SOL</div>
                 </div>
               ) : (
-                <div className="flex items-end gap-2">
-                  <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">$238.80</span>
-                  <span className="text-sm text-gray-500 font-medium mb-1">/ year</span>
+                <div>
+                  <div className="flex items-end gap-2">
+                    <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">$19.90</span>
+                    <span className="text-sm text-gray-500 font-medium mb-1">/ month</span>
+                  </div>
+                  <div className="text-sm text-gray-500 font-medium mt-1">Billed monthly in SOL</div>
                 </div>
               )}
-              {isAnnual && <div className="text-sm text-emerald-400 font-bold mt-2">Billed annually in SOL</div>}
+            </div>
+
+            {/* SCARCITY PROGRESS BAR */}
+            <div className="mb-8 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+              <div className="flex justify-between text-xs font-bold text-amber-500 mb-2 uppercase tracking-wider">
+                <span>Early Bird Spots</span>
+                <span>87 / 100</span>
+              </div>
+              <div className="w-full h-1.5 bg-black rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-amber-500 to-orange-500 w-[87%] rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
+              </div>
+              <p className="text-[10px] text-gray-400 mt-2 text-center">To ensure sub-millisecond RPC speeds, slots are strictly capped.</p>
             </div>
             
             <ul className="space-y-4 mb-8 flex-1">
@@ -110,7 +126,6 @@ const Pricing = () => {
                 <span className="text-amber-500">✦</span> Helius Turbo Node Routing (0.1ms)
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200">
-                {/* CORRETTO */}
                 <span className="text-amber-500">✦</span> VIP Discord (Auto-calls Score &gt; 90)
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200 opacity-80">
@@ -126,12 +141,17 @@ const Pricing = () => {
             </button>
           </div>
 
-          {/* 3. PRO TIER (The Impulse Buy) */}
+          {/* 3. PRO TIER (The Alternative) */}
           <div className="bg-[#0a0a0a] border border-[#222] rounded-3xl p-8 h-full flex flex-col hover:border-blue-500/30 transition-colors">
             <h3 className="text-xl font-black text-white mb-2">Sniper</h3>
             <p className="text-sm text-gray-500 mb-6">Remove the limits. Never get rugged again.</p>
             
-            <div className="text-4xl font-black text-white mb-8">$19.90 <span className="text-sm text-gray-500 font-medium">/ month</span></div>
+            <div className="mb-8">
+              <div className="text-4xl font-black text-white mb-1">
+                {isAnnual ? '$14.90' : '$19.90'} <span className="text-sm text-gray-500 font-medium">/ month</span>
+              </div>
+              {isAnnual && <div className="text-xs text-blue-400 font-medium">Billed $178.80 yearly</div>}
+            </div>
             
             <ul className="space-y-4 mb-8 flex-1">
               <li className="flex items-start gap-3 text-sm text-gray-300">
