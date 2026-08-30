@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
+// In Vite DEVI usare import.meta.env e le variabili DEVONO iniziare con VITE_
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error("⚠️ Manca la configurazione di Supabase nel file .env!");
+  console.error("⚠️ Variabili Supabase mancanti! Controlla Vercel o il file .env locale.");
 }
 
-// Esportiamo il client per usarlo in tutta l'app
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
