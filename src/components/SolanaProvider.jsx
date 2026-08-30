@@ -7,11 +7,11 @@ import { clusterApiUrl } from '@solana/web3.js';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 export const SolanaProvider = ({ children }) => {
-    // 1. Impostiamo la rete su Devnet (Soldi finti per i test)
-    const network = WalletAdapterNetwork.Devnet;
+    // 1. Passaggio UFFICIALE a Mainnet (Soldi Veri)
+    const network = WalletAdapterNetwork.Mainnet;
     
-    // 2. Creiamo il ponte di connessione in modo ottimizzato (useMemo)
-    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+    // 2. Creiamo il ponte puntando alla blockchain reale ('mainnet-beta')
+    const endpoint = useMemo(() => clusterApiUrl('mainnet-beta'), []);
     const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
     return (
