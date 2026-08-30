@@ -12,7 +12,6 @@ export const WalletProfile = () => {
   const [showKey, setShowKey] = useState(false);
   const [isLoading, setIsLoading] = useState(true); 
 
-  // Custom Toast State per sostituire gli alert()
   const [toast, setToast] = useState({ show: false, type: 'success', title: '', message: null });
 
   const baseData = {
@@ -69,7 +68,8 @@ export const WalletProfile = () => {
 
     try {
       const isPremium = selectedPlan === 'premium';
-      const usdPrice = isPremium ? 69.90 : 14.90;
+      // LOGICA PRICING CORRETTA
+      const usdPrice = isPremium ? 149.90 : 14.90;
       const daysToAdd = isPremium ? 365 : 30;
 
       const solResp = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
@@ -79,7 +79,7 @@ export const WalletProfile = () => {
       const solAmountTarget = parseFloat((usdPrice / solPriceUsd).toFixed(4));
       const lamportsToPay = solAmountTarget * 1e9; 
 
-      const TARGET_FOUNDER_WALLET = new PublicKey("J216pocVZkQ1aipatZfeHQuyJq1WiFHqcHhsimyNz9vG");
+      const TARGET_FOUNDER_WALLET = new PublicKey("ERRYCEdzkYXcnCycVGYNmoQ2RHhdhi1wDfnFuRKHJ7QA");
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
@@ -113,7 +113,6 @@ export const WalletProfile = () => {
 
       setLocalProData({ planType: selectedPlan, syncKey: newSyncKey, expiresAt: expirationDate });
       
-      // Messaggi differenziati e super premium in Inglese
       if (selectedPlan === 'premium') {
         showToast(
           'success', 
@@ -263,7 +262,11 @@ export const WalletProfile = () => {
           {/* PRO PLAN */}
           <div className={`bg-[#0a0c10] border ${userData.planType === 'pro' ? 'border-emerald-500/50 shadow-[0_0_20px_rgba(0,230,118,0.1)]' : 'border-[#333] hover:border-emerald-500/30'} p-8 rounded-2xl relative overflow-hidden transition-all flex flex-col`}>
             <h4 className="text-xl font-bold text-white mb-1">PRO Radar</h4>
-            <div className="text-2xl font-black text-emerald-400 mb-6">$14.90 <span className="text-xs text-gray-500 font-medium">/ month (in SOL)</span></div>
+            <div className="mb-6">
+                <div className="text-4xl font-black text-emerald-400 mb-1">$14.90 <span className="text-sm text-gray-500 font-medium">/ month</span></div>
+                <div className="text-xs text-gray-500 font-medium">Billed monthly in SOL</div>
+            </div>
+            
             <ul className="space-y-3 mb-8 flex-1">
               <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-emerald-500">✓</span> <span><b>Unlimited</b> AI Scans</span></li>
               <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-emerald-500">✓</span> <span>Standard AI Model (DeepSeek)</span></li>
@@ -279,7 +282,7 @@ export const WalletProfile = () => {
               {isProcessing === 'pro' ? "Processing..." : 
                userData.planType === 'pro' ? "Current Plan" : 
                (userData.planType === 'premium' || userData.planType === 'admin') ? "Included in Premium" : 
-               "Activate PRO (Monthly)"}
+               "Activate PRO"}
             </button>
           </div>
 
@@ -291,13 +294,18 @@ export const WalletProfile = () => {
               </div>
             )}
             <h4 className="text-xl font-bold text-white mb-1">INSTITUTIONAL Terminal</h4>
-            <div className="text-2xl font-black text-purple-400 mb-6">$69.90 <span className="text-xs text-gray-500 font-medium">/ year (in SOL)</span></div>
+            <div className="mb-6">
+                <div className="text-4xl font-black text-purple-400 mb-1">$149.90 <span className="text-sm text-gray-500 font-medium">/ year</span></div>
+                <div className="text-xs text-purple-400/80 font-medium">Equals $12.49/mo (Save 16% + Extra Features)</div>
+            </div>
+
             <ul className="space-y-3 mb-8 flex-1">
               <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span>Everything in PRO</span></li>
               <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Institutional AI</b> (GPT-4o / Claude)</span></li>
               <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span>Helius Turbo Nodes (0.1ms latency)</span></li>
               <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span>Syndicate Spy (Track 10 Wallets)</span></li>
             </ul>
+            
             <button 
               onClick={() => handleUpgrade('premium')}
               disabled={isProcessing !== false || userData.planType === 'premium' || userData.planType === 'admin'}
@@ -305,7 +313,7 @@ export const WalletProfile = () => {
             >
               {isProcessing === 'premium' ? "Processing..." : 
                (userData.planType === 'premium' || userData.planType === 'admin') ? "Current Plan" : 
-               "Activate PREMIUM (Yearly)"}
+               "Activate PREMIUM"}
             </button>
           </div>
 

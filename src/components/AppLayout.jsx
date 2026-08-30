@@ -32,7 +32,7 @@ export const AppLayout = ({ children }) => {
           onClick={() => navigate('/')} 
           className="text-xl font-black tracking-tight text-white flex items-center gap-2"
         >
-          <img src="/meme.jpg" alt="Logo" className="w-8 h-8 rounded-lg border border-[#333]" />
+          <img src="/meme.png" alt="Logo" className="w-8 h-8 rounded-lg border border-[#333]" />
           Meme<span className="text-gray-500 font-medium">Saver</span>
         </button>
         <button 
@@ -65,7 +65,7 @@ export const AppLayout = ({ children }) => {
         {/* Logo (Cliccabile: riporta alla Home) */}
         <div className="p-6 border-b border-[#222] hidden md:block cursor-pointer hover:opacity-80 transition-opacity" onClick={() => navigate('/')}>
           <div className="flex items-center gap-3">
-            <img src="/meme.jpg" alt="Logo" className="w-8 h-8 rounded-lg border border-[#333]" />
+            <img src="/meme.png" alt="Logo" className="w-8 h-8 rounded-lg border border-[#333]" />
             <h1 className="text-2xl font-black tracking-tight text-white">
               Meme<span className="text-gray-500 font-medium">Saver</span>
             </h1>

@@ -49,7 +49,7 @@ const LandingPage = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-emerald-500/20 blur-md rounded-xl group-hover:bg-emerald-500/40 transition-colors"></div>
               <img 
-                src="/meme.jpg" 
+                src="/meme.png" 
                 alt="Meme Saver Logo" 
                 className="relative w-10 h-10 rounded-xl border border-white/10 shadow-lg"
               />
@@ -136,7 +136,7 @@ const LandingPage = () => {
                   <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f] border border-black/20"></div>
                 </div>
                 <div className="absolute left-1/2 -translate-x-1/2 bg-[#050505] px-3 py-1 rounded-md border border-white/5 flex items-center gap-2">
-                  <img src="/meme.jpg" alt="icon" className="w-3 h-3 rounded-sm grayscale" />
+                  <img src="/meme.png" alt="icon" className="w-3 h-3 rounded-sm grayscale" />
                   <span className="text-[9px] font-mono text-gray-400 tracking-widest">MEME SAVER</span>
                 </div>
               </div>
@@ -272,7 +272,7 @@ const LandingPage = () => {
             
             <div className="md:col-span-2 pr-8">
               <div className="flex items-center gap-3 mb-6">
-                <img src="/meme.jpg" alt="Logo" className="w-8 h-8 rounded-lg border border-[#333] grayscale opacity-80" />
+                <img src="/meme.png" alt="Logo" className="w-8 h-8 rounded-lg border border-[#333] grayscale opacity-80" />
                 <span className="text-xl font-black tracking-tight text-white opacity-90">
                   Meme<span className="text-gray-500 font-medium">Saver</span>
                 </span>
