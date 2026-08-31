@@ -29,7 +29,11 @@ export const Radar = () => {
     });
 
     try {
-      const response = await fetch(`http://localhost:3000/api/scan/${token.address}`);
+        // 1. Definiamo l'URL del server in modo dinamico
+          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+         // 2. Facciamo la chiamata inserendo l'indirizzo del token
+          const response = await fetch(`${API_URL}/api/scan/${token.address}`);
       const scanResult = await response.json();
 
       if (response.ok) {

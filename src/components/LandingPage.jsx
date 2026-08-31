@@ -41,7 +41,7 @@ const LandingPage = () => {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
         <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
-          Helius Turbo Nodes fully integrated • Sub-millisecond latency active
+          DeepSeek AI Core Active • Deep On-Chain Scan (~15s)
         </span>
       </div>
 
@@ -89,7 +89,7 @@ const LandingPage = () => {
                 <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">All Systems Operational</span>
               </div>
 
-              {/* DROPDOWN MENU */}
+              {/* DROPDOWN MENU - REALISTICO ED ONESTO */}
               <div className={`absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-300 origin-top-right ${isNetworkModalOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
                 <div className="text-xs font-black text-white uppercase tracking-widest mb-5 border-b border-white/5 pb-3">Live Network Health</div>
                 
@@ -97,11 +97,11 @@ const LandingPage = () => {
                   {/* Helius RPC */}
                   <div>
                     <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                      <span>Solana RPC (Helius)</span>
-                      <span className="text-emerald-400">99.9%</span>
+                      <span>Solana RPC (Helius Free)</span>
+                      <span className="text-emerald-400">Stable</span>
                     </div>
                     <div className="w-full bg-[#161616] rounded-full h-1.5 border border-white/5 overflow-hidden">
-                      <div className="bg-emerald-500 h-1.5 rounded-full relative" style={{ width: '99%' }}>
+                      <div className="bg-emerald-500 h-1.5 rounded-full relative" style={{ width: '100%' }}>
                         <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]"></div>
                       </div>
                     </div>
@@ -110,32 +110,13 @@ const LandingPage = () => {
                   {/* DeepSeek / AI Core */}
                   <div>
                     <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                      <span>AI Core (DeepSeek/Claude)</span>
-                      <span className="text-emerald-400">100%</span>
+                      <span>AI Consensus (DeepSeek)</span>
+                      <span className="text-amber-400">~15s Processing</span>
                     </div>
                     <div className="w-full bg-[#161616] rounded-full h-1.5 border border-white/5 overflow-hidden">
-                      <div className="bg-emerald-500 h-1.5 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" style={{ width: '100%' }}></div>
+                      <div className="bg-amber-500 h-1.5 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)]" style={{ width: '100%' }}></div>
                     </div>
                   </div>
-
-                  {/* Backend */}
-                  <div>
-                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                      <span>Backend Node Engine</span>
-                      <span className="text-amber-400">32% Load</span>
-                    </div>
-                    <div className="w-full bg-[#161616] rounded-full h-1.5 border border-white/5 overflow-hidden">
-                      <div className="bg-amber-500 h-1.5 rounded-full" style={{ width: '32%' }}></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center">
-                  <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Global Latency</span>
-                  <span className="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                    42ms
-                  </span>
                 </div>
               </div>
             </div>
@@ -146,8 +127,10 @@ const LandingPage = () => {
             >
               Dashboard
             </button>
+            
+            {/* DOWNLOAD BETA BUTTON */}
             <button className="px-6 py-2.5 bg-gradient-to-r from-emerald-400 to-cyan-500 text-black text-sm font-black rounded-xl hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]">
-              Add to Browser
+              Join Private Beta
             </button>
           </div>
         </div>
@@ -373,20 +356,20 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* PHASE 3: AUTOMATION */}
+            {/* PHASE 3: ADVANCED ALERTS (Legally Compliant) */}
             <div className="relative pl-10 md:pl-16 group">
               <div className="absolute -left-[17px] top-1 w-8 h-8 bg-[#050505] border border-purple-500 rounded-full flex items-center justify-center z-10 group-hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-shadow">
                 <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
               </div>
-              <div className="text-purple-400 font-bold text-sm tracking-widest uppercase mb-2">Phase 3 • Auto-Execution</div>
-              <h3 className="text-2xl font-black text-white mb-4">The Auto-Sniper Protocol</h3>
+              <div className="text-purple-400 font-bold text-sm tracking-widest uppercase mb-2">Phase 3 • Terminal Webhooks</div>
+              <h3 className="text-2xl font-black text-white mb-4">The Alpha Notification Protocol</h3>
               <div className="bg-gradient-to-br from-[#1a1025] to-[#0a0a0a] border border-purple-500/20 p-6 rounded-2xl shadow-xl group-hover:border-purple-500/50 transition-colors relative overflow-hidden">
                 <div className="absolute right-0 top-0 w-32 h-32 bg-purple-500/10 blur-2xl"></div>
                 <p className="text-sm text-gray-300 mb-2 font-light leading-relaxed relative z-10">
-                  Switch from manual trading to absolute automation. Users will be able to configure Meme Saver to automatically snipe launches that pass our deepest security checks.
+                  Instead of staring at charts, connect Meme Saver to your private Discord or Telegram. Receive instant priority alerts the moment our AI assigns a Trust Score &gt; 90 to a new launch.
                 </p>
                 <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-500/20 border border-purple-500/30 text-[10px] font-black text-purple-300 uppercase tracking-widest relative z-10">
-                  Auto-Buy triggers at Trust Score &gt; 90
+                  Priority API Access included in Premium
                 </div>
               </div>
             </div>

@@ -58,7 +58,7 @@ export const Leaderboard = () => {
         console.warn("Backend unavailable or timed out. Injecting simulated data for UI testing.", err.message);
         // 🔥 NO MORE INFINITE LOADING: Inject mock data if server is down
         if (isMounted) {
-            setTopTraders(getMockData(timeframe));
+            setTopTraders([]); // Array vuoto, niente dati simulati!
             setServerStatus('offline');
         }
       } finally {
