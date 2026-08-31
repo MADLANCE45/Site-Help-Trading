@@ -293,17 +293,20 @@ export const WalletProfile = () => {
                 Best Value
               </div>
             )}
-            <h4 className="text-xl font-bold text-white mb-1">INSTITUTIONAL Terminal</h4>
+            <h4 className="text-xl font-bold text-white mb-1">PREMIUM</h4>
             <div className="mb-6">
                 <div className="text-4xl font-black text-purple-400 mb-1">$149.90 <span className="text-sm text-gray-500 font-medium">/ year</span></div>
-                <div className="text-xs text-purple-400/80 font-medium">Equals $12.49/mo (Save 16% + Extra Features)</div>
+                <div className="text-xs text-purple-400/80 font-medium mt-2">
+                  Engineered for maximum reliability and unthrottled access during peak network congestion.
+                </div>
             </div>
 
             <ul className="space-y-3 mb-8 flex-1">
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span>Everything in PRO</span></li>
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Institutional AI</b> (GPT-4o / Claude)</span></li>
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span>Helius Turbo Nodes (0.1ms latency)</span></li>
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span>Syndicate Spy (Track 10 Wallets)</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Unlimited</b> Deep-Scans & Volume Analysis</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Priority Execution Queue</b> (Bypass server traffic)</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Dedicated RPC Lane</b> (Maximized throughput)</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span>Advanced Syndicate Spy (Track up to 10 Whales)</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Early Access:</b> Terminal Webhooks & Alpha Features</span></li>
             </ul>
             
             <button 

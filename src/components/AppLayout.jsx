@@ -67,12 +67,16 @@ export const AppLayout = ({ children }) => {
       
       {/* HEADER MOBILE (Visibile solo su schermi piccoli) */}
       <div className="md:hidden fixed top-0 left-0 w-full h-16 bg-[#050505]/90 backdrop-blur-md border-b border-white/5 z-50 flex items-center justify-between px-4">
-        <button 
+       <button 
           onClick={() => navigate('/')} 
-          className="text-xl font-black tracking-tight text-white flex items-center gap-2"
+          className="text-xl font-black tracking-tight text-white flex items-center gap-2 shrink-0"
         >
-          <img src="/meme.png" alt="Logo" className="w-8 h-8 rounded-lg border border-white/10 grayscale opacity-90" />
-          Meme<span className="text-gray-500 font-medium">Saver</span>
+          <img 
+            src="/meme.png" 
+            alt="Logo" 
+            className="w-8 h-8 rounded-lg border border-white/10 grayscale opacity-90 shrink-0 object-cover" 
+          />
+          <span className="whitespace-nowrap">Meme<span className="text-gray-500 font-medium">Saver</span></span>
         </button>
         <button 
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

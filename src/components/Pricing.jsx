@@ -47,7 +47,7 @@ const Pricing = () => {
                 <span className="text-gray-600">✓</span> Standard Public Routing
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600 line-through">
-                <span>✕</span> MEV Sandwich Protection
+                <span>✕</span> Priority Server Queue
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600 line-through">
                 <span>✕</span> Sniper Radar
@@ -68,7 +68,7 @@ const Pricing = () => {
               Best Value
             </div>
             
-            <h3 className="text-2xl font-black text-white mb-2">Institutional</h3>
+            <h3 className="text-2xl font-black text-white mb-2">Premium</h3>
             <p className="text-sm text-gray-400 mb-8 font-light">The ultimate unfair advantage for serious snipers.</p>
             
             <div className="mb-8">
@@ -79,33 +79,31 @@ const Pricing = () => {
               <div className="text-sm text-gray-400 font-medium">Equals <span className="text-white font-bold">$12.49 / month</span></div>
             </div>
 
-            {/* SCARCITY PROGRESS BAR */}
+            {/* VALUE PROPOSITION BOX (Replaces the fake scarcity bar) */}
             <div className="mb-8 p-4 bg-purple-500/10 border border-purple-500/20 rounded-2xl shadow-inner">
-              <div className="flex justify-between text-[10px] font-black text-purple-400 mb-2 uppercase tracking-widest">
-                <span>Early Bird Spots</span>
-                <span>87 / 100</span>
+              <div className="text-[10px] font-black text-purple-400 mb-2 uppercase tracking-widest text-center">
+                Uncompromised Performance
               </div>
-              <div className="w-full h-1.5 bg-[#050505] rounded-full overflow-hidden border border-black/50">
-                <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 w-[87%] rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
-              </div>
-              <p className="text-[10px] text-gray-400 mt-3 text-center leading-relaxed">To ensure sub-millisecond RPC speeds, node slots are strictly capped.</p>
+              <p className="text-[11px] text-gray-400 text-center leading-relaxed">
+                Engineered for maximum reliability. Your requests bypass server traffic for prioritized analysis during peak network congestion.
+              </p>
             </div>
             
             <ul className="space-y-4 mb-10 flex-1">
               <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> <b>Unlimited</b> AI Scans & Copilot
+                <span className="text-purple-500">✦</span> <b>Unlimited</b> Deep-Scans & Volume Analysis
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> <b>Institutional AI</b> (GPT-4o / Claude)
+                <span className="text-purple-500">✦</span> <b>Priority Execution Queue</b> (Bypass traffic)
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> Syndicate Spy (Track up to 10 Whales)
+                <span className="text-purple-500">✦</span> Advanced Syndicate Spy (Track 10 Whales)
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> Helius Turbo Node Routing (0.1ms)
+                <span className="text-purple-500">✦</span> <b>Dedicated RPC Lane</b> (Maximized throughput)
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> VIP Discord (Auto-calls Score &gt; 90)
+                <span className="text-purple-500">✦</span> <b>Early Access:</b> Terminal Webhooks & Alpha
               </li>
             </ul>
             
@@ -135,16 +133,16 @@ const Pricing = () => {
                 <span className="text-emerald-500">✓</span> <b>Unlimited</b> AI Scans
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
-                <span className="text-emerald-500">✓</span> Jito MEV Shield (No Sandwich)
+                <span className="text-emerald-500">✓</span> Standard AI Model (DeepSeek)
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-emerald-500">✓</span> 1x Whale Spy Radar
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
-                <span className="text-emerald-500">✓</span> Standard AI Model (DeepSeek)
+                <span className="text-emerald-500">✓</span> Standard Server Queue
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600 line-through">
-                <span>✕</span> VIP Discord & Turbo Nodes
+                <span>✕</span> Terminal Webhooks & Priority RPC
               </li>
             </ul>
             
