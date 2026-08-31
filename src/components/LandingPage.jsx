@@ -248,7 +248,99 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+      {/* ROADMAP SECTION */}
+      {/* ROADMAP SECTION */}
+            <section id="roadmap" className="py-32 px-6 relative border-t border-white/5 bg-gradient-to-b from-[#050505] to-[#020202]">
+        {/* Sfondo Astratto */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-900/10 blur-[120px] rounded-full pointer-events-none"></div>
+        
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-gray-400 mb-6 uppercase tracking-widest backdrop-blur-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              The Masterplan
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
+              Evolving the <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Edge.</span>
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
+              We are not just building an extension. We are building the ultimate on-chain execution terminal for Solana.
+            </p>
+          </div>
 
+          <div className="relative border-l border-white/10 ml-4 md:ml-12 space-y-16 pb-8">
+            
+            {/* PHASE 1: CURRENT */}
+            <div className="relative pl-10 md:pl-16 group">
+              <div className="absolute -left-[17px] top-1 w-8 h-8 bg-[#050505] border border-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.5)] z-10">
+                <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+              </div>
+              <div className="text-emerald-400 font-bold text-sm tracking-widest uppercase mb-2">Phase 1 • Live Now</div>
+              <h3 className="text-2xl font-black text-white mb-4">Web Terminal & Extension</h3>
+              <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl shadow-xl group-hover:border-emerald-500/30 transition-colors">
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3 text-sm text-gray-400"><span className="text-emerald-500">✓</span> Real-time AI Trust Score</li>
+                  <li className="flex items-center gap-3 text-sm text-gray-400"><span className="text-emerald-500">✓</span> Micro-Dumping Radar</li>
+                  <li className="flex items-center gap-3 text-sm text-gray-400"><span className="text-emerald-500">✓</span> Phantom Web3 Integration</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* PHASE 2: OCT 15 */}
+            <div className="relative pl-10 md:pl-16 group">
+              <div className="absolute -left-[17px] top-1 w-8 h-8 bg-[#050505] border border-cyan-500 rounded-full flex items-center justify-center z-10 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transition-shadow">
+                <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+              </div>
+              <div className="text-cyan-400 font-bold text-sm tracking-widest uppercase mb-2">Phase 2 • Target: Oct 15, 2026</div>
+              <h3 className="text-2xl font-black text-white mb-4">Mobile Telegram Ecosystem</h3>
+              <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl shadow-xl group-hover:border-cyan-500/30 transition-colors">
+                <p className="text-sm text-gray-400 mb-5 font-light leading-relaxed">
+                  Expanding our architecture to rule the mobile market and slashing latency to absolute zero.
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 text-sm text-gray-300"><span className="text-cyan-500 font-black">→</span> <b>Telegram Sniper Bot:</b> Analyze tokens directly from your phone chat.</li>
+                  <li className="flex items-start gap-3 text-sm text-gray-300"><span className="text-cyan-500 font-black">→</span> <b>Alpha Broadcast Channel:</b> Instant automated alerts for tokens hitting 90+ Trust Score.</li>
+                  <li className="flex items-start gap-3 text-sm text-gray-300"><span className="text-cyan-500 font-black">→</span> <b>Sub-10s Execution:</b> Engine optimized to deliver complex AI scans in under 10 seconds.</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* PHASE 3: AUTOMATION */}
+            <div className="relative pl-10 md:pl-16 group">
+              <div className="absolute -left-[17px] top-1 w-8 h-8 bg-[#050505] border border-purple-500 rounded-full flex items-center justify-center z-10 group-hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-shadow">
+                <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+              </div>
+              <div className="text-purple-400 font-bold text-sm tracking-widest uppercase mb-2">Phase 3 • Auto-Execution</div>
+              <h3 className="text-2xl font-black text-white mb-4">The Auto-Sniper Protocol</h3>
+              <div className="bg-gradient-to-br from-[#1a1025] to-[#0a0a0a] border border-purple-500/20 p-6 rounded-2xl shadow-xl group-hover:border-purple-500/50 transition-colors relative overflow-hidden">
+                <div className="absolute right-0 top-0 w-32 h-32 bg-purple-500/10 blur-2xl"></div>
+                <p className="text-sm text-gray-300 mb-2 font-light leading-relaxed relative z-10">
+                  Switch from manual trading to absolute automation. Users will be able to configure Meme Saver to automatically snipe launches that pass our deepest security checks.
+                </p>
+                <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-500/20 border border-purple-500/30 text-[10px] font-black text-purple-300 uppercase tracking-widest relative z-10">
+                  Auto-Buy triggers at Trust Score &gt; 90
+                </div>
+              </div>
+            </div>
+
+            {/* PHASE 4: THE PLATFORM */}
+            <div className="relative pl-10 md:pl-16 group">
+              <div className="absolute -left-[17px] top-1 w-8 h-8 bg-[#050505] border border-amber-500 rounded-full flex items-center justify-center z-10 group-hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-shadow">
+                <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+              </div>
+              <div className="text-amber-500 font-bold text-sm tracking-widest uppercase mb-2">Phase 4 • The Endgame</div>
+              <h3 className="text-2xl font-black text-white mb-4">Native Investment Platform</h3>
+              <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl shadow-xl group-hover:border-amber-500/30 transition-colors">
+                <p className="text-sm text-gray-400 font-light leading-relaxed mb-4">
+                  Why leave the dashboard to buy? We will integrate custom DEX routing directly into Meme Saver. You'll be able to analyze, manage risk, and execute trades in one single interface.
+                </p>
+                <div className="w-full h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent opacity-50 rounded"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
       {/* FOOTER & LEGAL DISCLAIMER */}
       <footer className="border-t border-white/5 bg-[#020202] pt-20 pb-10 px-6">
         <div className="max-w-7xl mx-auto">
