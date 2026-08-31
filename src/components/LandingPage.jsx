@@ -5,8 +5,10 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // NUOVO STATO PER IL PANNELLO DI RETE
+  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const videoRef = useRef(null);
-
+  // ... resto del codice
   useEffect(() => {
     if (videoRef.current) {
         if(isPlaying){
@@ -70,11 +72,77 @@ const LandingPage = () => {
             </span>
             <span className="hover:text-white transition-colors cursor-pointer tracking-wide opacity-50">Docs API</span>
           </div>
-          
-          <div className="flex items-center gap-5">
+          {/* Action Buttons & Network Status */}
+          <div className="flex items-center gap-4">
+            
+            {/* NETWORK STATUS PILL & DROPDOWN */}
+            <div 
+              className="relative hidden lg:block"
+              onMouseEnter={() => setIsNetworkModalOpen(true)}
+              onMouseLeave={() => setIsNetworkModalOpen(false)}
+            >
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-help backdrop-blur-md transition-colors hover:bg-white/10">
+                <div className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </div>
+                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">All Systems Operational</span>
+              </div>
+
+              {/* DROPDOWN MENU */}
+              <div className={`absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-300 origin-top-right ${isNetworkModalOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
+                <div className="text-xs font-black text-white uppercase tracking-widest mb-5 border-b border-white/5 pb-3">Live Network Health</div>
+                
+                <div className="space-y-5">
+                  {/* Helius RPC */}
+                  <div>
+                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                      <span>Solana RPC (Helius)</span>
+                      <span className="text-emerald-400">99.9%</span>
+                    </div>
+                    <div className="w-full bg-[#161616] rounded-full h-1.5 border border-white/5 overflow-hidden">
+                      <div className="bg-emerald-500 h-1.5 rounded-full relative" style={{ width: '99%' }}>
+                        <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* DeepSeek / AI Core */}
+                  <div>
+                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                      <span>AI Core (DeepSeek/Claude)</span>
+                      <span className="text-emerald-400">100%</span>
+                    </div>
+                    <div className="w-full bg-[#161616] rounded-full h-1.5 border border-white/5 overflow-hidden">
+                      <div className="bg-emerald-500 h-1.5 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" style={{ width: '100%' }}></div>
+                    </div>
+                  </div>
+
+                  {/* Backend */}
+                  <div>
+                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                      <span>Backend Node Engine</span>
+                      <span className="text-amber-400">32% Load</span>
+                    </div>
+                    <div className="w-full bg-[#161616] rounded-full h-1.5 border border-white/5 overflow-hidden">
+                      <div className="bg-amber-500 h-1.5 rounded-full" style={{ width: '32%' }}></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center">
+                  <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Global Latency</span>
+                  <span className="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                    42ms
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <button 
               onClick={() => navigate('/dashboard')}
-              className="hidden sm:block text-sm font-bold text-gray-400 hover:text-white transition-colors"
+              className="hidden sm:block text-sm font-bold text-gray-400 hover:text-white transition-colors ml-2"
             >
               Dashboard
             </button>
@@ -348,32 +416,55 @@ const LandingPage = () => {
             
             <div className="md:col-span-2 pr-8">
               <div className="flex items-center gap-3 mb-6">
-                <img src="/meme.png" alt="Logo" className="w-8 h-8 rounded-lg border border-[#333] grayscale opacity-80" />
-                <span className="text-xl font-black tracking-tight text-white opacity-90">
-                  Meme<span className="text-gray-500 font-medium">Saver</span>
+                {/* RIMOSSO "grayscale" E "opacity-80" -> Ora il logo è a colori con un leggero alone */}
+                <img src="/meme.png" alt="Logo" className="w-8 h-8 rounded-lg border border-white/10 shadow-[0_0_10px_rgba(16,185,129,0.2)]" />
+                <span className="text-xl font-black tracking-tight text-white">
+                  Meme<span className="text-gray-400 font-medium">Saver</span>
                 </span>
               </div>
-              <p className="text-gray-500 text-sm leading-relaxed max-w-md font-light">
+              <p className="text-gray-400 text-sm leading-relaxed max-w-md font-light">
                 The on-chain analysis infrastructure designed to protect retail traders. We detect Sybil schemes, supply manipulation, and micro-dumping before you press buy.
               </p>
             </div>
 
             <div>
               <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Legal & Policy</h4>
-              <ul className="space-y-4 text-sm text-gray-500 font-medium">
-                <li><a href="/terms.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="/privacy.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/cookie.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Cookie Policy</a></li>
-                <li><a href="/risk.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Risk Disclosure</a></li>
+              {/* Testi più chiari (gray-400) e hover verde smeraldo */}
+              <ul className="space-y-4 text-sm text-gray-400 font-medium">
+                <li><a href="/terms.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
+                <li><a href="/privacy.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
+                <li><a href="/cookie.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Cookie Policy</a></li>
+                <li><a href="/risk.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Risk Disclosure</a></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Support</h4>
-              <ul className="space-y-4 text-sm text-gray-500 font-medium">
-                <li><a href="mailto:HelpTrading@proton.me" className="hover:text-emerald-400 transition-colors flex items-center gap-3"><span className="text-lg">✉️</span> HelpTrading@proton.me</a></li>
-                <li><span className="flex items-center gap-3 opacity-50 cursor-not-allowed"><span className="text-lg">💬</span> Discord (PRO Only)</span></li>
-                <li><a href="https://x.com/H3lpTrading" target="_blank" rel="noopener noreferrer" className="hover:text-[#1DA1F2] transition-colors flex items-center gap-3"><span className="text-lg">🐦</span> X / Twitter</a></li>
+              <ul className="space-y-4 text-sm text-gray-400 font-medium">
+                <li>
+                  <a href="mailto:HelpTrading@proton.me" className="hover:text-emerald-400 transition-colors flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    HelpTrading@proton.me
+                  </a>
+                </li>
+                <li>
+                  <span className="flex items-center gap-3 opacity-50 cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                    </svg>
+                    Discord (PRO Only)
+                  </span>
+                </li>
+                <li>
+                  <a href="https://x.com/H3lpTrading" target="_blank" rel="noopener noreferrer" className="hover:text-[#1DA1F2] transition-colors flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4 ml-0.5">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    X / Twitter
+                  </a>
+                </li>
               </ul>
             </div>
 
