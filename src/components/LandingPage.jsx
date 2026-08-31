@@ -3,16 +3,14 @@ import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  // State for the secondary video playback
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const videoRef = useRef(null);
 
-  // Auto-play control logic for the secondary video
   useEffect(() => {
     if (videoRef.current) {
         if(isPlaying){
             videoRef.current.play().catch(error => {
-                // Autoplay was prevented by the browser
                 setIsPlaying(false);
                 console.log("Autoplay prevented:", error);
             });
@@ -22,9 +20,14 @@ const LandingPage = () => {
     }
   }, [isPlaying]);
 
-  const handleVideoClick = () => {
-      setIsPlaying(!isPlaying);
-  };
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isModalOpen]);
 
   return (
     <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-emerald-500/30 overflow-x-hidden relative">
@@ -43,8 +46,6 @@ const LandingPage = () => {
       {/* ENHANCED NAVBAR */}
       <nav className="sticky top-0 w-full bg-[#050505]/80 backdrop-blur-2xl border-b border-white/5 z-50 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          
-          {/* Logo Area */}
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo(0,0)}>
             <div className="relative">
               <div className="absolute inset-0 bg-emerald-500/20 blur-md rounded-xl group-hover:bg-emerald-500/40 transition-colors"></div>
@@ -59,7 +60,6 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Center Links (Desktop) */}
           <div className="hidden md:flex items-center gap-10 text-sm font-bold text-gray-400">
             <a href="#features" className="hover:text-white transition-colors tracking-wide">Features</a>
             <span 
@@ -71,7 +71,6 @@ const LandingPage = () => {
             <span className="hover:text-white transition-colors cursor-pointer tracking-wide opacity-50">Docs API</span>
           </div>
           
-          {/* Action Buttons */}
           <div className="flex items-center gap-5">
             <button 
               onClick={() => navigate('/dashboard')}
@@ -88,13 +87,11 @@ const LandingPage = () => {
 
       {/* HERO SECTION */}
       <section className="relative pt-24 pb-20 px-6 min-h-[90vh] flex items-center justify-center">
-        {/* Abstract Background Glow */}
         <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/20 blur-[150px] rounded-full pointer-events-none"></div>
         <div className="absolute top-1/2 right-1/4 translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-600/20 blur-[150px] rounded-full pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
           
-          {/* HERO TEXT */}
           <div className="text-left z-20">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 mb-6 uppercase tracking-wider backdrop-blur-sm shadow-inner">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -120,15 +117,10 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* EXTENSION PANEL SHOWCASE (Replaces Phone Mockup) */}
           <div className="relative mx-auto w-full max-w-[340px] lg:max-w-[360px]">
-            {/* Soft Glow */}
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 blur-3xl rounded-[2rem] transform scale-105"></div>
             
-            {/* Extension Window Mockup */}
             <div className="relative bg-[#0a0a0a] rounded-2xl border border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,1)] overflow-hidden flex flex-col aspect-[10/16] ring-1 ring-white/5">
-              
-              {/* macOS Style Top Bar */}
               <div className="h-10 bg-[#161616] border-b border-white/5 flex items-center px-4 relative z-20 shrink-0">
                 <div className="flex gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] border border-black/20"></div>
@@ -141,7 +133,6 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              {/* Video Player - Extension UI bounds */}
               <div className="relative w-full flex-1 bg-[#050505] flex items-center justify-center">
                 <video 
                   src="/demo4k.mp4" 
@@ -151,24 +142,10 @@ const LandingPage = () => {
                   playsInline 
                   className="w-full h-full object-cover object-center" 
                 />
-                {/* Edge vignette */}
                 <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.95)] pointer-events-none"></div>
               </div>
             </div>
-
-            {/* Floating UI Badge */}
-            <div className="absolute -right-6 md:-right-12 bottom-12 bg-[#0a0a0a]/95 backdrop-blur-xl border border-rose-500/30 p-4 rounded-2xl shadow-[0_10px_40px_rgba(244,63,94,0.2)] flex items-center gap-4 z-40 animate-[bounce_4s_infinite]">
-              <div className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-              </div>
-              <div>
-                <div className="text-white font-black text-xs tracking-wider">SCAM DETECTED</div>
-                <div className="text-[10px] text-gray-400 mt-0.5">Micro-Dump Risk: <span className="text-rose-400 font-bold">HIGH</span></div>
-              </div>
-            </div>
           </div>
-
         </div>
       </section>
 
@@ -196,66 +173,73 @@ const LandingPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             
-            {/* SECONDARY VIDEO BOX (WITH PLAY/PAUSE LOGIC) */}
+            {/* SECONDARY VIDEO BOX (THUMBNAIL FOR LIGHTBOX) */}
             <div 
-              className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0a0a0a] aspect-video flex items-center justify-center group shadow-2xl ring-1 ring-white/5 cursor-pointer"
-              onClick={handleVideoClick}
+              className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0a0a0a] aspect-video flex items-center justify-center group shadow-2xl ring-1 ring-white/5 cursor-pointer transform hover:scale-[1.02] transition-all duration-500"
+              onClick={() => setIsModalOpen(true)}
             >
               <video 
-                  ref={videoRef}
                   src="/Video.mp4" 
+                  autoPlay
                   loop 
                   muted 
                   playsInline 
-                  className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${isPlaying ? 'opacity-100' : 'opacity-60 group-hover:opacity-80'}`} 
+                  className="absolute inset-0 w-full h-full object-contain opacity-60 group-hover:opacity-80 transition-opacity duration-700 blur-[2px] group-hover:blur-0" 
               />
-              <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none transition-opacity duration-500 ${isPlaying ? 'opacity-0' : 'opacity-100'}`}></div>
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500"></div>
               
-              {/* Play Button - Hidden when playing */}
-              {!isPlaying && (
-                 <div className="relative z-10 w-20 h-20 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center group-hover:bg-emerald-500 transition-colors duration-300 border border-white/20">
-                   <span className="text-3xl translate-x-1 text-white">▶</span>
-                 </div>
-              )}
+              {/* Elegant Play Button */}
+              <div className="relative z-10 w-20 h-20 bg-white/5 backdrop-blur-xl rounded-full flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.3)] group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all duration-500 border border-white/10 group-hover:border-emerald-500/50">
+                <svg className="w-8 h-8 text-white translate-x-0.5 opacity-90 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
               
-              <div className={`absolute bottom-6 left-6 text-xs font-bold text-white bg-black/50 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10 transition-opacity duration-500 ${isPlaying ? 'opacity-0' : 'opacity-100'}`}>
-                Meme Saver in Action (1:24)
+              {/* Adjusted Label */}
+              <div className="absolute bottom-6 left-6 text-xs font-bold text-gray-300 bg-[#050505]/80 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10">
+                Watch Full Demo <span className="text-emerald-400 ml-1">0:50</span>
               </div>
             </div>
 
-            {/* BULLET POINTS */}
-            <div className="space-y-12">
-              <div className="flex gap-6 group">
-                <div className="w-14 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/20 group-hover:border-blue-500/50 transition-all">
-                  <span className="text-2xl">🕵️‍♂️</span>
+            {/* REFINED BULLET POINTS */}
+            <div className="space-y-10">
+              <div className="flex gap-5 group">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
+                  <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                  </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Micro-Dumping Detector</h3>
-                  <p className="text-gray-400 text-base leading-relaxed font-light">
+                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1.5 group-hover:text-emerald-400 transition-colors">Micro-Dumping Detector</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
                     Tracks silent movements of Dev-linked wallets. The algorithm detects when liquidity is fragmented and secretly dumped on retail.
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-6 group">
-                <div className="w-14 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/50 transition-all">
-                  <span className="text-2xl">⚖️</span>
+              <div className="flex gap-5 group">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
+                  <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                  </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Instant Trust Score</h3>
-                  <p className="text-gray-400 text-base leading-relaxed font-light">
+                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1.5 group-hover:text-emerald-400 transition-colors">Instant Trust Score</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
                     Browse Pump.fun or DexScreener naturally. Our panel generates a real-time score from 1 to 100 based on 12 complex on-chain metrics.
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-6 group">
-                <div className="w-14 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all">
-                  <span className="text-2xl">📦</span>
+              <div className="flex gap-5 group">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
+                  <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                  </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Bundle Supply Shield</h3>
-                  <p className="text-gray-400 text-base leading-relaxed font-light">
+                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1.5 group-hover:text-emerald-400 transition-colors">Bundle Supply Shield</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
                     Instantly discover if the Dev bought their own supply in the exact same launch block using Jito, preparing to drain the liquidity pool.
                   </p>
                 </div>
@@ -319,6 +303,36 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
+
+      {/* FULLSCREEN VIDEO MODAL (LIGHTBOX) */}
+      {isModalOpen && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 md:p-10 animate-in fade-in duration-300"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <button 
+            className="absolute top-6 right-6 z-[110] w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-emerald-500 text-white transition-colors duration-300 backdrop-blur-md"
+            onClick={(e) => { e.stopPropagation(); setIsModalOpen(false); }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <div 
+            className="relative w-full max-w-6xl aspect-video rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.2)] border border-white/10 bg-black scale-in-center"
+            onClick={(e) => e.stopPropagation()} 
+          >
+            <video 
+              src="/Video.mp4" 
+              autoPlay 
+              controls 
+              className="w-full h-full object-contain"
+            ></video>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
