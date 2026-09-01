@@ -302,11 +302,11 @@ export const WalletProfile = () => {
             </div>
 
             <ul className="space-y-3 mb-8 flex-1">
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Unlimited</b> Deep-Scans & Volume Analysis</span></li>
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Priority Execution Queue</b> (Bypass server traffic)</span></li>
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Dedicated RPC Lane</b> (Maximized throughput)</span></li>
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span>Advanced Syndicate Spy (Track up to 10 Whales)</span></li>
-              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✓</span> <span><b>Early Access:</b> Terminal Webhooks & Alpha Features</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✦</span> <span><b>Unlimited</b> Deep-Scans & Volume Analysis</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✦</span> <span><b>Institutional AI Core</b> (GPT-4o & Claude 3.5 Sonnet)</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✦</span> <span><b>Priority Execution Queue</b> (Bypass server traffic)</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✦</span> <span>Advanced Syndicate Spy (Track up to 10 Whales)</span></li>
+              <li className="flex items-start gap-2 text-sm text-gray-300"><span className="text-purple-400">✦</span> <span><b>Early Access:</b> Terminal Webhooks & Alpha Features</span></li>
             </ul>
             
             <button 

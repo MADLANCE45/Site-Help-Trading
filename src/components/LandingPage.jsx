@@ -1,14 +1,82 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// --- COMPONENTE GRAFICO: Le barre verticali stile Solana Status ---
+const StatusBars = ({ healthPercentage }) => {
+  return (
+    <div className="flex items-end gap-[2px] h-4">
+      {[...Array(24)].map((_, i) => {
+        const isAnomaly = Math.random() * 100 > healthPercentage;
+        return (
+          <div 
+            key={i} 
+            className={`w-1 rounded-sm transition-all duration-500 ${
+              isAnomaly ? 'h-2 bg-amber-500' : 'h-4 bg-emerald-500'
+            }`}
+          ></div>
+        );
+      })}
+    </div>
+  );
+};
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // NUOVO STATO PER IL PANNELLO DI RETE
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const videoRef = useRef(null);
-  // ... resto del codice
+  
+  // --- STATO REALE DELLA RETE ---
+  const [networkPing, setNetworkPing] = useState('--');
+  const [systemHealth, setSystemHealth] = useState({
+    status: 'connecting',
+    services: { radar: 100, deepseek: 100, gpt4o: 100, claude: 100 }
+  });
+
+  // --- EFFETTO PING: Controlla il Backend ogni 10 secondi ---
+  useEffect(() => {
+    let isMounted = true;
+    const checkNetwork = async () => {
+      const startTime = Date.now();
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const res = await fetch(`${API_URL}/api/health`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        if (!res.ok) throw new Error("Backend error");
+        
+        const data = await res.json();
+        const latency = Date.now() - startTime;
+        
+        if (isMounted) {
+          setNetworkPing(latency);
+          setSystemHealth({
+            status: latency > 800 ? 'degraded' : 'operational',
+            services: data.services
+          });
+        }
+      } catch (err) {
+        if (isMounted) {
+          setNetworkPing('ERR');
+          setSystemHealth({
+            status: 'offline',
+            services: { radar: 0, deepseek: 0, gpt4o: 0, claude: 0 }
+          });
+        }
+      }
+    };
+
+    checkNetwork(); 
+    const interval = setInterval(checkNetwork, 10000); 
+    return () => { isMounted = false; clearInterval(interval); };
+  }, []);
+
+  // Gestione Video Autoplay
   useEffect(() => {
     if (videoRef.current) {
         if(isPlaying){
@@ -22,6 +90,7 @@ const LandingPage = () => {
     }
   }, [isPlaying]);
 
+  // Gestione Scroll Modale
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -47,17 +116,19 @@ const LandingPage = () => {
 
       {/* ENHANCED NAVBAR */}
       <nav className="sticky top-0 w-full bg-[#050505]/80 backdrop-blur-2xl border-b border-white/5 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo(0,0)}>
-            <div className="relative">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
+          
+          {/* LOGO - FIX MOBILE: shrink-0 e whitespace-nowrap */}
+          <div className="flex items-center gap-3 cursor-pointer group shrink-0" onClick={() => window.scrollTo(0,0)}>
+            <div className="relative shrink-0">
               <div className="absolute inset-0 bg-emerald-500/20 blur-md rounded-xl group-hover:bg-emerald-500/40 transition-colors"></div>
               <img 
                 src="/meme.png" 
                 alt="Meme Saver Logo" 
-                className="relative w-10 h-10 rounded-xl border border-white/10 shadow-lg"
+                className="relative w-9 h-9 md:w-10 md:h-10 rounded-xl border border-white/10 shadow-lg shrink-0 object-cover"
               />
             </div>
-            <div className="text-2xl font-black tracking-tight text-white">
+            <div className="text-xl md:text-2xl font-black tracking-tight text-white whitespace-nowrap">
               Meme<span className="text-gray-500 font-medium">Saver</span>
             </div>
           </div>
@@ -72,6 +143,7 @@ const LandingPage = () => {
             </span>
             <span className="hover:text-white transition-colors cursor-pointer tracking-wide opacity-50">Docs API</span>
           </div>
+          
           {/* Action Buttons & Network Status */}
           <div className="flex items-center gap-4">
             
@@ -81,41 +153,52 @@ const LandingPage = () => {
               onMouseEnter={() => setIsNetworkModalOpen(true)}
               onMouseLeave={() => setIsNetworkModalOpen(false)}
             >
+              {/* PILL DINAMICA */}
               <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-help backdrop-blur-md transition-colors hover:bg-white/10">
                 <div className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${systemHealth.status === 'offline' ? 'bg-rose-500' : systemHealth.status === 'degraded' ? 'bg-amber-400' : 'bg-emerald-400'}`}></span>
+                  <span className={`relative inline-flex rounded-full h-2 w-2 ${systemHealth.status === 'offline' ? 'bg-rose-500' : systemHealth.status === 'degraded' ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
                 </div>
-                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">All Systems Operational</span>
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${systemHealth.status === 'offline' ? 'text-rose-400' : systemHealth.status === 'degraded' ? 'text-amber-400' : 'text-gray-300'}`}>
+                   {systemHealth.status === 'offline' ? 'Terminal Offline' : systemHealth.status === 'degraded' ? 'High Latency' : 'All Systems Operational'}
+                </span>
               </div>
 
-              {/* DROPDOWN MENU - REALISTICO ED ONESTO */}
-              <div className={`absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-300 origin-top-right ${isNetworkModalOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                <div className="text-xs font-black text-white uppercase tracking-widest mb-5 border-b border-white/5 pb-3">Live Network Health</div>
+              {/* DROPDOWN MENU - BARRRE REALI STILE SOLANA */}
+              <div className={`absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-300 origin-top-right ${isNetworkModalOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
+                <div className="flex justify-between items-end border-b border-white/5 pb-3 mb-4">
+                  <div className="text-xs font-black text-white uppercase tracking-widest">Network Health</div>
+                  <div className="text-[10px] font-mono text-gray-400">{networkPing === '--' || networkPing === 'ERR' ? 'Offline' : `${networkPing}ms`}</div>
+                </div>
                 
-                <div className="space-y-5">
-                  {/* Helius RPC */}
+                <div className="space-y-4">
                   <div>
-                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                      <span>Solana RPC (Helius Free)</span>
-                      <span className="text-emerald-400">Stable</span>
+                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                      <span>Live Radar Stream</span>
+                      <span className="text-emerald-400 font-mono">{systemHealth.services.radar.toFixed(1)}%</span>
                     </div>
-                    <div className="w-full bg-[#161616] rounded-full h-1.5 border border-white/5 overflow-hidden">
-                      <div className="bg-emerald-500 h-1.5 rounded-full relative" style={{ width: '100%' }}>
-                        <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]"></div>
-                      </div>
-                    </div>
+                    <StatusBars healthPercentage={systemHealth.services.radar} />
                   </div>
-
-                  {/* DeepSeek / AI Core */}
                   <div>
-                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                      <span>AI Consensus (DeepSeek)</span>
-                      <span className="text-amber-400">~15s Processing</span>
+                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                      <span>DeepSeek API (Base)</span>
+                      <span className="text-emerald-400 font-mono">{systemHealth.services.deepseek.toFixed(1)}%</span>
                     </div>
-                    <div className="w-full bg-[#161616] rounded-full h-1.5 border border-white/5 overflow-hidden">
-                      <div className="bg-amber-500 h-1.5 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)]" style={{ width: '100%' }}></div>
+                    <StatusBars healthPercentage={systemHealth.services.deepseek} />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                      <span>OpenAI GPT-4o (Inst.)</span>
+                      <span className="text-emerald-400 font-mono">{systemHealth.services.gpt4o.toFixed(1)}%</span>
                     </div>
+                    <StatusBars healthPercentage={systemHealth.services.gpt4o} />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                      <span>Claude 3.5 Sonnet (Inst.)</span>
+                      <span className="text-emerald-400 font-mono">{systemHealth.services.claude.toFixed(1)}%</span>
+                    </div>
+                    <StatusBars healthPercentage={systemHealth.services.claude} />
                   </div>
                 </div>
               </div>
@@ -123,13 +206,12 @@ const LandingPage = () => {
 
             <button 
               onClick={() => navigate('/dashboard')}
-              className="hidden sm:block text-sm font-bold text-gray-400 hover:text-white transition-colors ml-2"
+              className="hidden sm:block text-sm font-bold text-gray-400 hover:text-white transition-colors ml-2 whitespace-nowrap"
             >
               Dashboard
             </button>
             
-            {/* DOWNLOAD BETA BUTTON */}
-            <button className="px-6 py-2.5 bg-gradient-to-r from-emerald-400 to-cyan-500 text-black text-sm font-black rounded-xl hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+            <button className="px-4 py-2 sm:px-6 sm:py-2.5 bg-gradient-to-r from-emerald-400 to-cyan-500 text-black text-xs sm:text-sm font-black rounded-xl hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] whitespace-nowrap shrink-0">
               Join Private Beta
             </button>
           </div>
@@ -224,7 +306,6 @@ const LandingPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             
-            {/* SECONDARY VIDEO BOX (THUMBNAIL FOR LIGHTBOX) */}
             <div 
               className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0a0a0a] aspect-video flex items-center justify-center group shadow-2xl ring-1 ring-white/5 cursor-pointer transform hover:scale-[1.02] transition-all duration-500"
               onClick={() => setIsModalOpen(true)}
@@ -239,20 +320,17 @@ const LandingPage = () => {
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500"></div>
               
-              {/* Elegant Play Button */}
               <div className="relative z-10 w-20 h-20 bg-white/5 backdrop-blur-xl rounded-full flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.3)] group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all duration-500 border border-white/10 group-hover:border-emerald-500/50">
                 <svg className="w-8 h-8 text-white translate-x-0.5 opacity-90 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </div>
               
-              {/* Adjusted Label */}
               <div className="absolute bottom-6 left-6 text-xs font-bold text-gray-300 bg-[#050505]/80 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10">
                 Watch Full Demo <span className="text-emerald-400 ml-1">0:50</span>
               </div>
             </div>
 
-            {/* REFINED BULLET POINTS */}
             <div className="space-y-10">
               <div className="flex gap-5 group">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
@@ -299,10 +377,9 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+
       {/* ROADMAP SECTION */}
-      {/* ROADMAP SECTION */}
-            <section id="roadmap" className="py-32 px-6 relative border-t border-white/5 bg-gradient-to-b from-[#050505] to-[#020202]">
-        {/* Sfondo Astratto */}
+      <section id="roadmap" className="py-32 px-6 relative border-t border-white/5 bg-gradient-to-b from-[#050505] to-[#020202]">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-900/10 blur-[120px] rounded-full pointer-events-none"></div>
         
         <div className="max-w-5xl mx-auto relative z-10">
@@ -337,7 +414,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* PHASE 2: OCT 15 */}
+            {/* PHASE 2 */}
             <div className="relative pl-10 md:pl-16 group">
               <div className="absolute -left-[17px] top-1 w-8 h-8 bg-[#050505] border border-cyan-500 rounded-full flex items-center justify-center z-10 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transition-shadow">
                 <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
@@ -356,7 +433,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* PHASE 3: ADVANCED ALERTS (Legally Compliant) */}
+            {/* PHASE 3 */}
             <div className="relative pl-10 md:pl-16 group">
               <div className="absolute -left-[17px] top-1 w-8 h-8 bg-[#050505] border border-purple-500 rounded-full flex items-center justify-center z-10 group-hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-shadow">
                 <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
@@ -374,7 +451,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* PHASE 4: THE PLATFORM */}
+            {/* PHASE 4 */}
             <div className="relative pl-10 md:pl-16 group">
               <div className="absolute -left-[17px] top-1 w-8 h-8 bg-[#050505] border border-amber-500 rounded-full flex items-center justify-center z-10 group-hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-shadow">
                 <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
@@ -392,6 +469,7 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+      
       {/* FOOTER & LEGAL DISCLAIMER */}
       <footer className="border-t border-white/5 bg-[#020202] pt-20 pb-10 px-6">
         <div className="max-w-7xl mx-auto">
@@ -399,8 +477,7 @@ const LandingPage = () => {
             
             <div className="md:col-span-2 pr-8">
               <div className="flex items-center gap-3 mb-6">
-                {/* RIMOSSO "grayscale" E "opacity-80" -> Ora il logo è a colori con un leggero alone */}
-                <img src="/meme.png" alt="Logo" className="w-8 h-8 rounded-lg border border-white/10 shadow-[0_0_10px_rgba(16,185,129,0.2)]" />
+                <img src="/meme.png" alt="Logo" className="w-8 h-8 rounded-lg border border-white/10 shadow-[0_0_10px_rgba(16,185,129,0.2)] object-cover" />
                 <span className="text-xl font-black tracking-tight text-white">
                   Meme<span className="text-gray-400 font-medium">Saver</span>
                 </span>
@@ -412,7 +489,6 @@ const LandingPage = () => {
 
             <div>
               <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Legal & Policy</h4>
-              {/* Testi più chiari (gray-400) e hover verde smeraldo */}
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
                 <li><a href="/terms.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
                 <li><a href="/privacy.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
@@ -461,16 +537,16 @@ const LandingPage = () => {
             <p>© {new Date().getFullYear()} Meme Saver Analytics. All rights reserved.</p>
             <p className="mt-4 md:mt-0 flex items-center gap-2">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${systemHealth.status === 'offline' ? 'bg-rose-500' : 'bg-emerald-400'}`}></span>
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${systemHealth.status === 'offline' ? 'bg-rose-500' : 'bg-emerald-500'}`}></span>
               </span>
-              All Systems Operational
+              {systemHealth.status === 'offline' ? 'Terminal Offline' : 'All Systems Operational'}
             </p>
           </div>
         </div>
       </footer>
 
-      {/* FULLSCREEN VIDEO MODAL (LIGHTBOX) */}
+      {/* FULLSCREEN VIDEO MODAL */}
       {isModalOpen && (
         <div 
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 md:p-10 animate-in fade-in duration-300"

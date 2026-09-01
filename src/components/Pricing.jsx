@@ -94,13 +94,13 @@ const Pricing = () => {
                 <span className="text-purple-500">✦</span> <b>Unlimited</b> Deep-Scans & Volume Analysis
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200">
+                <span className="text-purple-500">✦</span> <b>Institutional AI Core</b> (GPT-4o & Claude 3.5 Sonnet)
+              </li>
+              <li className="flex items-start gap-3 text-sm text-gray-200">
                 <span className="text-purple-500">✦</span> <b>Priority Execution Queue</b> (Bypass traffic)
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200">
                 <span className="text-purple-500">✦</span> Advanced Syndicate Spy (Track 10 Whales)
-              </li>
-              <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> <b>Dedicated RPC Lane</b> (Maximized throughput)
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-200">
                 <span className="text-purple-500">✦</span> <b>Early Access:</b> Terminal Webhooks & Alpha
