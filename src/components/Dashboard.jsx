@@ -165,10 +165,11 @@ export const Dashboard = () => {
   const planType = userData?.plan_type || 'free';
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
+    // FIX: Rimosso overflow-hidden, aggiunta min-h-screen e padding-bottom
+    <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-8 min-h-screen pb-20"> 
       
       {/* HEADER */}
-      <div className="border-b border-[#222] pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <div className="border-b border-[#222] pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mt-4 md:mt-0">
         <div>
           <h2 className="text-3xl font-semibold text-white tracking-tight">Control Room</h2>
           <p className="text-gray-400 text-sm mt-1">On-chain wallet diagnostics and license management.</p>
