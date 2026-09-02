@@ -36,7 +36,7 @@ export const Leaderboard = () => {
       const timeoutId = setTimeout(() => controller.abort(), 4000);
 
       try {
-        const response = await fetch(`http://localhost:3000/api/leaderboard?timeframe=${timeframe}`, {
+        const response = await fetch(`https://help-trading-production.up.railway.app/api/leaderboard?timeframe=${timeframe}`, {
           signal: controller.signal
         });
         

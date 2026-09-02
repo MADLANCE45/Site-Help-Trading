@@ -51,7 +51,7 @@ export const Dashboard = () => {
       setIsLoadingAudit(true);
       try {
         // CORREZIONE URL DINAMICO
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
         
         // Timeout di sicurezza per non far aspettare troppo l'utente
         const controller = new AbortController();

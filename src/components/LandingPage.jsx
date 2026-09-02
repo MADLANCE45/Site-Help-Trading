@@ -39,7 +39,7 @@ const LandingPage = () => {
     let isMounted = true;
     const checkNetwork = async () => {
       const startTime = Date.now();
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
       
       try {
         const controller = new AbortController();

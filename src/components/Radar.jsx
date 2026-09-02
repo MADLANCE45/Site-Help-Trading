@@ -8,7 +8,7 @@ export const Radar = () => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const socket = io('http://localhost:3000');
+    const socket = io('https://help-trading-production.up.railway.app');
     socket.on('newToken', (tokenData) => {
       setLiveTokens((prev) => [tokenData, ...prev].slice(0, 50));
     });
@@ -30,7 +30,7 @@ export const Radar = () => {
 
     try {
         // 1. Definiamo l'URL del server in modo dinamico
-          const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+          const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
 
          // 2. Facciamo la chiamata inserendo l'indirizzo del token
           const response = await fetch(`${API_URL}/api/scan/${token.address}`);

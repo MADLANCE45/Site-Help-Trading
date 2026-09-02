@@ -131,7 +131,7 @@ export const WalletProfile = () => {
       }, 'confirmed');
 
       // Invia la ricevuta al tuo Backend per creare l'account
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
       const verifyResp = await fetch(`${API_URL}/api/verify-payment`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
