@@ -38,19 +38,24 @@ const Pricing = () => {
             
             <ul className="space-y-4 mb-10 flex-1">
               <li className="flex items-start gap-3 text-sm text-gray-400">
-                <span className="text-gray-600">✓</span> 5 AI Scans per day
+                <span className="text-gray-600 mt-0.5 flex-shrink-0">✓</span> 
+                <span className="leading-relaxed">5 AI Scans per day</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-400">
-                <span className="text-gray-600">✓</span> Basic DeepSeek Model
+                <span className="text-gray-600 mt-0.5 flex-shrink-0">✓</span> 
+                <span className="leading-relaxed">Basic DeepSeek Model</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-400">
-                <span className="text-gray-600">✓</span> Standard Public Routing
+                <span className="text-gray-600 mt-0.5 flex-shrink-0">✓</span> 
+                <span className="leading-relaxed">Standard Public Routing</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600 line-through">
-                <span>✕</span> Priority Server Queue
+                <span className="mt-0.5 flex-shrink-0">✕</span> 
+                <span className="leading-relaxed">Priority Server Queue</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600 line-through">
-                <span>✕</span> Sniper Radar
+                <span className="mt-0.5 flex-shrink-0">✕</span> 
+                <span className="leading-relaxed">Sniper Radar</span>
               </li>
             </ul>
             
@@ -64,7 +69,7 @@ const Pricing = () => {
 
           {/* 2. PREMIUM TIER (The Anchor & Best Value) */}
           <div className="relative bg-gradient-to-b from-[#11081c] to-[#050505] border border-purple-500/50 rounded-3xl p-8 md:p-10 flex flex-col transform md:-translate-y-4 shadow-[0_0_50px_rgba(168,85,247,0.15)] z-20 ring-1 ring-white/5">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-500 text-black text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-500 text-black text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
               Best Value
             </div>
             
@@ -76,34 +81,39 @@ const Pricing = () => {
                 <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">$149.90</span>
               </div>
               <div className="text-xs text-purple-400/80 font-bold uppercase tracking-widest mb-1">Billed Yearly in SOL</div>
-              <div className="text-sm text-gray-400 font-medium">Equals <span className="text-white font-bold">$12.49 / month</span></div>
+              <div className="text-sm text-gray-400 font-medium">Equals <strong className="text-white">$12.49 / month</strong></div>
             </div>
 
-            {/* VALUE PROPOSITION BOX (Replaces the fake scarcity bar) */}
+            {/* VALUE PROPOSITION BOX */}
             <div className="mb-8 p-4 bg-purple-500/10 border border-purple-500/20 rounded-2xl shadow-inner">
               <div className="text-[10px] font-black text-purple-400 mb-2 uppercase tracking-widest text-center">
                 Uncompromised Performance
               </div>
-              <p className="text-[11px] text-gray-400 text-center leading-relaxed">
+              <p className="text-[11px] text-gray-300 text-center leading-relaxed">
                 Engineered for maximum reliability. Your requests bypass server traffic for prioritized analysis during peak network congestion.
               </p>
             </div>
             
-            <ul className="space-y-4 mb-10 flex-1">
-              <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> <b>Unlimited</b> Deep-Scans & Volume Analysis
+            <ul className="space-y-5 mb-10 flex-1">
+              <li className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
+                <span className="leading-relaxed"><strong className="text-white">Unlimited</strong> Deep-Scans & Volume Analysis</span>
               </li>
-              <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> <b>Institutional AI Core</b> (GPT-4o & Claude 3.5 Sonnet)
+              <li className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
+                <span className="leading-relaxed"><strong className="text-white">Institutional AI Core</strong> (GPT-4o & Claude 3.5 Sonnet)</span>
               </li>
-              <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> <b>Priority Execution Queue</b> (Bypass traffic)
+              <li className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
+                <span className="leading-relaxed"><strong className="text-white">Priority Execution Queue</strong> (Bypass traffic)</span>
               </li>
-              <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> Advanced Syndicate Spy (Track 10 Whales)
+              <li className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
+                <span className="leading-relaxed">Advanced Syndicate Spy (Track up to 10 Whales)</span>
               </li>
-              <li className="flex items-start gap-3 text-sm text-gray-200">
-                <span className="text-purple-500">✦</span> <b>Early Access:</b> Terminal Webhooks & Alpha
+              <li className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
+                <span className="leading-relaxed"><strong className="text-white">Early Access:</strong> Terminal Webhooks & Alpha</span>
               </li>
             </ul>
             
@@ -130,19 +140,24 @@ const Pricing = () => {
             
             <ul className="space-y-4 mb-10 flex-1">
               <li className="flex items-start gap-3 text-sm text-gray-300">
-                <span className="text-emerald-500">✓</span> <b>Unlimited</b> AI Scans
+                <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
+                <span className="leading-relaxed"><strong className="text-white">Unlimited</strong> AI Scans</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
-                <span className="text-emerald-500">✓</span> Standard AI Model (DeepSeek)
+                <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
+                <span className="leading-relaxed">Standard AI Model (DeepSeek)</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
-                <span className="text-emerald-500">✓</span> 1x Whale Spy Radar
+                <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
+                <span className="leading-relaxed">1x Whale Spy Radar</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
-                <span className="text-emerald-500">✓</span> Standard Server Queue
+                <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
+                <span className="leading-relaxed">Standard Server Queue</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600 line-through">
-                <span>✕</span> Terminal Webhooks & Priority RPC
+                <span className="mt-0.5 flex-shrink-0">✕</span> 
+                <span className="leading-relaxed">Terminal Webhooks & Priority RPC</span>
               </li>
             </ul>
             

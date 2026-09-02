@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
 import { supabase } from '../supabase';
-
+import { Connection, PublicKey, Transaction, SystemProgram } from '@solana/web3.js';
 export const WalletProfile = () => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
@@ -61,79 +60,114 @@ export const WalletProfile = () => {
 
   const handleUpgrade = async (selectedPlan) => {
     if (!publicKey) {
-      showToast('error', 'WALLET DISCONNECTED ⚠️', 'Please connect your Phantom wallet to upgrade your tier.');
+      showToast('error', 'WALLET DISCONNECTED', 'Please connect your Phantom wallet.');
       return;
     }
     setIsProcessing(selectedPlan);
 
     try {
+      // 🔥 MODALITÀ PRODUZIONE ATTIVA: TestMode disattivato 🔥
+      const isTestMode = false; 
+
       const isPremium = selectedPlan === 'premium';
-      // LOGICA PRICING CORRETTA
-      const usdPrice = isPremium ? 149.90 : 14.90;
       const daysToAdd = isPremium ? 365 : 30;
-
-      const solResp = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
-      const solData = await solResp.json();
-      const solPriceUsd = parseFloat(solData.price);
       
-      const solAmountTarget = parseFloat((usdPrice / solPriceUsd).toFixed(4));
-      const lamportsToPay = solAmountTarget * 1e9; 
+      // I prezzi esatti mostrati sulla tua Landing Page
+      const usdPrice = isPremium ? 149.90 : 14.90; 
 
-      const TARGET_FOUNDER_WALLET = new PublicKey("ERRYCEdzkYXcnCycVGYNmoQ2RHhdhi1wDfnFuRKHJ7QA");
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: TARGET_FOUNDER_WALLET,
-          lamports: lamportsToPay,
-        })
-      );
+      let solAmountTarget = 0;
 
-      const signature = await sendTransaction(transaction, connection);
-      console.log("Transaction sent! Signature:", signature);
-
-      await connection.confirmTransaction(signature, 'confirmed');
-
-      const newSyncKey = "ms-" + selectedPlan + "-" + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
-      const expirationDate = new Date(Date.now() + daysToAdd * 24 * 60 * 60 * 1000).toISOString();
-
-      try {
-        const { error } = await supabase
-          .from('users')
-          .upsert({ 
-            wallet_address: publicKey.toString(), 
-            plan_type: selectedPlan, 
-            pro_expires_at: expirationDate,
-            sync_key: newSyncKey
-          }, { onConflict: 'wallet_address' });
-
-        if (error) throw error;
-      } catch (dbErr) {
-        console.warn("DB issue, but payment secured.", dbErr);
+      if (isTestMode) {
+          solAmountTarget = 0.001; // Solo per test
+      } else {
+          // CONVERSIONE LIVE DOLLARI -> SOL TRAMITE BINANCE
+          let solPriceUsd = 140; // Prezzo base di emergenza
+          try {
+            const solResp = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
+            if (solResp.ok) {
+                const solData = await solResp.json();
+                solPriceUsd = parseFloat(solData.price);
+            }
+          } catch (apiErr) {
+            console.warn("API Prezzo Binance irraggiungibile, uso prezzo di fallback.", apiErr);
+          }
+          
+          // Calcolo matematico per richiedere l'esatto importo in SOL
+          solAmountTarget = parseFloat((usdPrice / solPriceUsd).toFixed(4));
+          console.log(`💰 L'utente sta per pagare $${usdPrice}. Prezzo SOL: $${solPriceUsd} -> Totale: ${solAmountTarget} SOL`);
       }
 
-      setLocalProData({ planType: selectedPlan, syncKey: newSyncKey, expiresAt: expirationDate });
+      // Converte i SOL in Lamports (interi)
+      const lamportsToPay = Math.floor(solAmountTarget * 1e9); 
+      
+      // Connessione diretta e blindata tramite Helius
+      const HELIUS_RPC = "https://mainnet.helius-rpc.com/?api-key=b85ff0ae-b208-4fe9-897b-1d7a446b9d36";
+      const directConnection = new Connection(HELIUS_RPC, 'confirmed');
+
+      const { blockhash, lastValidBlockHeight } = await directConnection.getLatestBlockhash('confirmed');
+
+      // 🎯 IL TUO WALLET DOVE ARRIVERANNO I SOLDI:
+      const TARGET_FOUNDER_WALLET = new PublicKey("ERRYCEdzkYXcnCycVGYNmoQ2RHhdhi1wDfnFuRKHJ7QA");
+      
+      const transaction = new Transaction({
+          recentBlockhash: blockhash,
+          feePayer: publicKey
+      }).add(
+          SystemProgram.transfer({
+              fromPubkey: publicKey,
+              toPubkey: TARGET_FOUNDER_WALLET,
+              lamports: lamportsToPay,
+          })
+      );
+
+      // Apre Phantom
+      const signature = await sendTransaction(transaction, directConnection);
+      
+      // Conferma sulla Blockchain
+      await directConnection.confirmTransaction({
+        signature: signature,
+        blockhash: blockhash,
+        lastValidBlockHeight: lastValidBlockHeight
+      }, 'confirmed');
+
+      // Invia la ricevuta al tuo Backend per creare l'account
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const verifyResp = await fetch(`${API_URL}/api/verify-payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+              walletAddress: publicKey.toString(),
+              signature: signature,
+              planType: selectedPlan
+          })
+      });
+
+      const verifyData = await verifyResp.json();
+
+      if (!verifyResp.ok || !verifyData.success) {
+          throw new Error(verifyData.error || "Errore server verifica");
+      }
+
+      // Salva nel frontend e mostra il successo
+      setLocalProData({ 
+          planType: selectedPlan, 
+          syncKey: verifyData.syncKey, 
+          expiresAt: verifyData.expiresAt 
+      });
       
       if (selectedPlan === 'premium') {
-        showToast(
-          'success', 
-          'INSTITUTIONAL TIER ACTIVATED 💎', 
-          'Welcome to the elite. You now have full access to GPT-4o, Turbo Nodes, and advanced Syndicate tracking. Paste your new Sync Key in the extension.'
-        );
+        showToast('success', 'INSTITUTIONAL TIER ACTIVATED 💎', 'Welcome to the elite. Paste your new Sync Key in the extension.');
       } else {
-        showToast(
-          'success', 
-          'PRO TIER ACTIVATED ⚡', 
-          'Sniper mode engaged. Unlimited scans and Jito MEV protection have been successfully unlocked. Paste your new Sync Key in the extension.'
-        );
+        showToast('success', 'SNIPER TIER ACTIVATED ⚡', 'Sniper mode engaged. Unlimited scans unlocked.');
       }
       
     } catch (err) {
-      console.error(err);
-      showToast(
-        'error', 
-        'TRANSACTION FAILED ⚠️', 
-        'The upgrade process was cancelled or failed. No funds were withdrawn from your wallet.'
-      );
+      console.error("❌ ERRORE TRANSAZIONE:", err);
+      if (err.message && err.message.toLowerCase().includes("user rejected")) {
+          showToast('error', 'PAGAMENTO ANNULLATO', 'Hai chiuso Phantom senza confermare.');
+      } else {
+          showToast('error', 'TRANSACTION FAILED ⚠️', 'Impossibile completare. Verifica i fondi e la connessione.');
+      }
     } finally {
       setIsProcessing(false);
     }
