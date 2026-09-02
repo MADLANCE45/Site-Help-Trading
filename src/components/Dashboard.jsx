@@ -322,7 +322,7 @@ export const Dashboard = () => {
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <button className="w-full sm:w-auto px-6 py-3.5 bg-white text-black font-black text-sm rounded-xl hover:bg-gray-200 hover:-translate-y-0.5 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-            Download Beta (.zip)
+            Download Beta
           </button>
         </div>
       </div>

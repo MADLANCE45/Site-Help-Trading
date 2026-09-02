@@ -145,7 +145,7 @@ export const WalletProfile = () => {
       const verifyData = await verifyResp.json();
 
       if (!verifyResp.ok || !verifyData.success) {
-          throw new Error(verifyData.error || "Errore server verifica");
+          throw new Error(verifyData.error || "Server verification error");
       }
 
       // Salva nel frontend e mostra il successo
@@ -162,11 +162,11 @@ export const WalletProfile = () => {
       }
       
     } catch (err) {
-      console.error("❌ ERRORE TRANSAZIONE:", err);
+      console.error("❌ TRANSACTION ERROR:", err);
       if (err.message && err.message.toLowerCase().includes("user rejected")) {
-          showToast('error', 'PAGAMENTO ANNULLATO', 'Hai chiuso Phantom senza confermare.');
+          showToast('error', 'PAYMENT CANCELLED', 'You closed Phantom without confirming.');
       } else {
-          showToast('error', 'TRANSACTION FAILED ⚠️', 'Impossibile completare. Verifica i fondi e la connessione.');
+          showToast('error', 'TRANSACTION FAILED ⚠️', 'Unable to complete. Please check your funds and connection.');
       }
     } finally {
       setIsProcessing(false);
