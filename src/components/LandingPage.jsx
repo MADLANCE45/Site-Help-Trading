@@ -491,17 +491,17 @@ const LandingPage = () => {
               <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Legal & Policy</h4>
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
   <li>
-    <span onClick={() => navigate('/terms')} className="hover:text-emerald-400 transition-colors cursor-pointer">Terms of Service</span>
+     <span onClick={() => window.open('/terms.pdf', '_blank')} className="hover:text-emerald-400 transition-colors cursor-pointer">Terms of Service</span> 
   </li>
   <li>
     {/* ECCO IL LINK ALLA TUA NUOVA PAGINA REACT! */}
     <span onClick={() => navigate('/privacy-policy')} className="hover:text-emerald-400 transition-colors cursor-pointer">Privacy Policy</span>
   </li>
   <li>
-    <span onClick={() => navigate('/cookie-policy')} className="hover:text-emerald-400 transition-colors cursor-pointer">Cookie Policy</span>
+    <span onClick={() => window.open('/cookie.pdf', '_blank')} className="hover:text-emerald-400 transition-colors cursor-pointer">Cookie Policy</span>   
   </li>
   <li>
-    <span onClick={() => navigate('/risk-disclosure')} className="hover:text-emerald-400 transition-colors cursor-pointer">Risk Disclosure</span>
+    <span onClick={() => window.open('/risk.pdf', '_blank')} className="hover:text-emerald-400 transition-colors cursor-pointer">Risk Disclosure</span>
   </li>
 </ul>
             </div>
