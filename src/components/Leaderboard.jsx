@@ -36,13 +36,17 @@ export const Leaderboard = () => {
       const timeoutId = setTimeout(() => controller.abort(), 4000);
 
       try {
-        const response = await fetch(`https://help-trading-production.up.railway.app/api/leaderboard?timeframe=${timeframe}`, {
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
+    // 1. Definisci la base (Così se sei in locale usa VITE_API_URL, se sei online usa Railway)
+          const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
+    
+    // 2. Componi l'URL usando la variabile
+           const response = await fetch(`${API_URL}/api/leaderboard?timeframe=${timeframe}`, {
+           signal: controller.signal
+          });
+    
+          clearTimeout(timeoutId);
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const result = await response.json();
         

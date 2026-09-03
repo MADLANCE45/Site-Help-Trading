@@ -8,10 +8,16 @@ export const Radar = () => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const socket = io('https://help-trading-production.up.railway.app');
+    // 1. Dichiariamo l'API_URL anche qui
+    const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
+    
+    // 2. Lo passiamo al socket
+    const socket = io(API_URL);
+    
     socket.on('newToken', (tokenData) => {
       setLiveTokens((prev) => [tokenData, ...prev].slice(0, 50));
     });
+    
     return () => socket.disconnect();
   }, []);
 
