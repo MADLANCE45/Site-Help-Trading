@@ -490,11 +490,20 @@ const LandingPage = () => {
             <div>
               <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Legal & Policy</h4>
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
-                <li><a href="/terms.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Terms of Service</a></li>
-                <li><a href="/privacy.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Privacy Policy</a></li>
-                <li><a href="/cookie.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Cookie Policy</a></li>
-                <li><a href="/risk.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Risk Disclosure</a></li>
-              </ul>
+  <li>
+    <span onClick={() => navigate('/terms')} className="hover:text-emerald-400 transition-colors cursor-pointer">Terms of Service</span>
+  </li>
+  <li>
+    {/* ECCO IL LINK ALLA TUA NUOVA PAGINA REACT! */}
+    <span onClick={() => navigate('/privacy-policy')} className="hover:text-emerald-400 transition-colors cursor-pointer">Privacy Policy</span>
+  </li>
+  <li>
+    <span onClick={() => navigate('/cookie-policy')} className="hover:text-emerald-400 transition-colors cursor-pointer">Cookie Policy</span>
+  </li>
+  <li>
+    <span onClick={() => navigate('/risk-disclosure')} className="hover:text-emerald-400 transition-colors cursor-pointer">Risk Disclosure</span>
+  </li>
+</ul>
             </div>
 
             <div>
