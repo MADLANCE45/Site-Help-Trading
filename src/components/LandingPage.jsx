@@ -26,7 +26,22 @@ const LandingPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const videoRef = useRef(null);
-  
+
+  // --- FUNZIONE INSTALLAZIONE ESTENSIONE ---
+  const handleInstallClick = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const chromeLink = "https://chromewebstore.google.com/detail/solana-pump-radar/mmghnjnoolonhfofffknckldjajjgidk";
+    // Metti il link di Firefox appena lo hai
+    const firefoxLink = "https://addons.mozilla.org/firefox/addon/IL_TUO_ID_FIREFOX/"; 
+
+    if (userAgent.includes("firefox")) {
+      window.open(firefoxLink, '_blank');
+    } else {
+      // Default a Chrome per Chrome, Edge, Brave, Opera
+      window.open(chromeLink, '_blank');
+    }
+  };
+
   // --- STATO REALE DELLA RETE ---
   const [networkPing, setNetworkPing] = useState('--');
   const [systemHealth, setSystemHealth] = useState({
@@ -118,7 +133,6 @@ const LandingPage = () => {
       <nav className="sticky top-0 w-full bg-[#050505]/80 backdrop-blur-2xl border-b border-white/5 z-50 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
           
-          {/* LOGO - FIX MOBILE: shrink-0 e whitespace-nowrap */}
           <div className="flex items-center gap-3 cursor-pointer group shrink-0" onClick={() => window.scrollTo(0,0)}>
             <div className="relative shrink-0">
               <div className="absolute inset-0 bg-emerald-500/20 blur-md rounded-xl group-hover:bg-emerald-500/40 transition-colors"></div>
@@ -144,16 +158,13 @@ const LandingPage = () => {
             <span className="hover:text-white transition-colors cursor-pointer tracking-wide opacity-50">Docs API</span>
           </div>
           
-          {/* Action Buttons & Network Status */}
           <div className="flex items-center gap-4">
             
-            {/* NETWORK STATUS PILL & DROPDOWN */}
             <div 
               className="relative hidden lg:block"
               onMouseEnter={() => setIsNetworkModalOpen(true)}
               onMouseLeave={() => setIsNetworkModalOpen(false)}
             >
-              {/* PILL DINAMICA */}
               <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg cursor-help backdrop-blur-md transition-colors hover:bg-white/10">
                 <div className="relative flex h-2 w-2">
                   <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${systemHealth.status === 'offline' ? 'bg-rose-500' : systemHealth.status === 'degraded' ? 'bg-amber-400' : 'bg-emerald-400'}`}></span>
@@ -164,7 +175,6 @@ const LandingPage = () => {
                 </span>
               </div>
 
-              {/* DROPDOWN MENU - BARRRE REALI STILE SOLANA */}
               <div className={`absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-300 origin-top-right ${isNetworkModalOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
                 <div className="flex justify-between items-end border-b border-white/5 pb-3 mb-4">
                   <div className="text-xs font-black text-white uppercase tracking-widest">Network Health</div>
@@ -211,8 +221,11 @@ const LandingPage = () => {
               Dashboard
             </button>
             
-            <button className="px-4 py-2 sm:px-6 sm:py-2.5 bg-gradient-to-r from-emerald-400 to-cyan-500 text-black text-xs sm:text-sm font-black rounded-xl hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] whitespace-nowrap shrink-0">
-              Join Private Beta
+            <button 
+              onClick={handleInstallClick}
+              className="px-4 py-2 sm:px-6 sm:py-2.5 bg-gradient-to-r from-emerald-400 to-cyan-500 text-black text-xs sm:text-sm font-black rounded-xl hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] whitespace-nowrap shrink-0"
+            >
+              Install Extension
             </button>
           </div>
         </div>
@@ -240,7 +253,10 @@ const LandingPage = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <button className="w-full sm:w-auto px-8 py-4 bg-white text-black font-black text-lg rounded-xl transition-all hover:bg-gray-200 hover:-translate-y-1 shadow-[0_10px_30px_rgba(255,255,255,0.15)] flex items-center justify-center gap-3">
+              <button 
+                onClick={handleInstallClick} 
+                className="w-full sm:w-auto px-8 py-4 bg-white text-black font-black text-lg rounded-xl transition-all hover:bg-gray-200 hover:-translate-y-1 shadow-[0_10px_30px_rgba(255,255,255,0.15)] flex items-center justify-center gap-3"
+              >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
                 Install Extension
               </button>

@@ -13,7 +13,18 @@ export const Dashboard = () => {
   
   // Terminal Typewriter State
   const [typedFeedback, setTypedFeedback] = useState('');
+const handleInstallClick = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const chromeLink = "https://chromewebstore.google.com/detail/solana-pump-radar/mmghnjnoolonhfofffknckldjajjgidk";
+    // Sostituisci questo quando hai il link Firefox
+    const firefoxLink = "https://addons.mozilla.org/firefox/addon/IL_TUO_ID_FIREFOX/"; 
 
+    if (userAgent.includes("firefox")) {
+      window.open(firefoxLink, '_blank');
+    } else {
+      window.open(chromeLink, '_blank');
+    }
+  };
   useEffect(() => {
     // 1. Gestione Wallet Disconnesso
     if (!publicKey) {
@@ -314,17 +325,26 @@ export const Dashboard = () => {
       </div>
 
       {/* CALL TO ACTION */}
-      <div className="bg-gradient-to-r from-[#0a0a0a] to-[#111] border border-[#222] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="bg-gradient-to-r from-[#0a0a0a] to-[#111] border border-[#222] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl mt-8">
         <div>
           <h3 className="text-xl font-black text-white mb-2">Elevate Your Trading Edge</h3>
           <p className="text-gray-400 text-sm max-w-xl leading-relaxed font-light">
-            Download the beta to block Sybil clusters and micro-dumping before executing any swap on Pump.fun or Raydium.
+            Download the extension to block Sybil clusters and micro-dumping before executing any swap on Pump.fun or Raydium.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          <button className="w-full sm:w-auto px-6 py-3.5 bg-white text-black font-black text-sm rounded-xl hover:bg-gray-200 hover:-translate-y-0.5 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-            Download Beta
+          
+          {/* 👇 2. BOTTONE AGGIORNATO CON L'AZIONE CLICK 👇 */}
+          <button 
+            onClick={handleInstallClick}
+            className="w-full sm:w-auto px-6 py-3.5 bg-white text-black font-black text-sm rounded-xl hover:bg-gray-200 hover:-translate-y-0.5 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Install Extension
           </button>
+          
         </div>
       </div>
 
