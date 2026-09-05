@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SolanaProvider } from './components/SolanaProvider';
 import PrivacyPolicy from './components/PrivacyPolicy'; 
-import { inject } from '@vercel/analytics';
+import { Analytics } from '@vercel/analytics/react';
 // Layout e Sicurezza
 import AppLayout from './components/AppLayout';
 import AuthGuard from './components/AuthGuard';
@@ -47,6 +47,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      <Analytics />
     </SolanaProvider>
   );
 }
