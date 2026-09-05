@@ -28,7 +28,7 @@ const Pricing = () => {
   const validAffiliates = {
     'CRYPTOBOY10': 0.10,
     'WHALE20': 0.20,
-    'SOLANABOY10': 0.10
+    'JASON10': 0.10
   };
 
   const currentBasePrice = checkoutPlan ? PLAN_PRICES[checkoutPlan] : 0;
