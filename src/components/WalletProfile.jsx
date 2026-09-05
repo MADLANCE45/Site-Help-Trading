@@ -29,7 +29,8 @@ export const WalletProfile = () => {
   // --- LISTA CODICI AFFILIATI ---
   const validAffiliates = {
     'CRYPTOBOY10': 0.10,
-    'WHALE20': 0.20
+    'WHALE20': 0.20,
+    'SOLANABOY10': 0.10
   };
 
   useEffect(() => {
