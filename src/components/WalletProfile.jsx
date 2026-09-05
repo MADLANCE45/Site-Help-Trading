@@ -419,7 +419,7 @@ export const WalletProfile = () => {
                   type="text" 
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
-                  placeholder="e.g. CRYPTOBOY10"
+                  placeholder="Enter promo code"
                   className="flex-1 bg-[#111] border border-[#333] text-white px-4 py-3 rounded-xl uppercase focus:border-emerald-500 outline-none font-mono text-sm transition-colors"
                 />
                 <button 
