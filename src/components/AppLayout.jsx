@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Analytics } from "@vercel/analytics/next"
+
 const StatusBars = ({ healthPercentage }) => {
   return (
     <div className="flex items-end gap-[2px] h-4">

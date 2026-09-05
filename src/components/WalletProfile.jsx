@@ -2,21 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { supabase } from '../supabase';
 import { Connection, PublicKey, Transaction, SystemProgram } from '@solana/web3.js';
+
 export const WalletProfile = () => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   
-  const [isProcessing, setIsProcessing] = useState(false);
   const [localProData, setLocalProData] = useState(null);
   const [showKey, setShowKey] = useState(false);
   const [isLoading, setIsLoading] = useState(true); 
-
   const [toast, setToast] = useState({ show: false, type: 'success', title: '', message: null });
+
+  // --- STATI DEL MODALE E SCONTI ---
+  const [checkoutPlan, setCheckoutPlan] = useState(null); // 'pro' o 'premium'
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [discountStatus, setDiscountStatus] = useState(null);
+  const [liveSolPrice, setLiveSolPrice] = useState(140); // Prezzo di sicurezza base
+  const [isFetchingPrice, setIsFetchingPrice] = useState(false);
 
   const baseData = {
     planType: 'free',
     syncKey: "",
     expiresAt: null
+  };
+
+  // --- LISTA CODICI AFFILIATI ---
+  const validAffiliates = {
+    'CRYPTOBOY10': 0.10,
+    'WHALE20': 0.20
   };
 
   useEffect(() => {
@@ -58,55 +71,67 @@ export const WalletProfile = () => {
     setTimeout(() => setToast({ show: false, type: '', title: '', message: null }), 6000);
   };
 
-  const handleUpgrade = async (selectedPlan) => {
+  // --- CALCOLO PREZZI DINAMICO ---
+  const getBaseUsdPrice = (plan) => plan === 'premium' ? 149.90 : 14.90;
+
+  const getFinalUsdPrice = (plan) => {
+    let price = getBaseUsdPrice(plan);
+    if (discountStatus === 'success' && validAffiliates[promoCode.toUpperCase()]) {
+      price = price * (1 - validAffiliates[promoCode.toUpperCase()]);
+    }
+    return price;
+  };
+
+  const getFinalSolPrice = () => {
+    if (!checkoutPlan) return "0.0000";
+    const usd = getFinalUsdPrice(checkoutPlan);
+    return (usd / liveSolPrice).toFixed(4);
+  };
+
+  const handleApplyPromo = () => {
+    const code = promoCode.toUpperCase().trim();
+    if (validAffiliates[code]) {
+      setDiscountStatus('success');
+    } else {
+      setDiscountStatus('error');
+    }
+  };
+
+  // APERTURA MODALE E FETCH PREZZO SOLANA
+  const openCheckoutModal = async (plan) => {
     if (!publicKey) {
       showToast('error', 'WALLET DISCONNECTED', 'Please connect your Phantom wallet.');
       return;
     }
-    setIsProcessing(selectedPlan);
+    setCheckoutPlan(plan);
+    setDiscountStatus(null);
+    setPromoCode('');
+    setIsFetchingPrice(true);
+    
+    try {
+      const solResp = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
+      if (solResp.ok) {
+          const solData = await solResp.json();
+          setLiveSolPrice(parseFloat(solData.price));
+      }
+    } catch (apiErr) {
+      console.warn("API Prezzo Binance irraggiungibile, uso prezzo di fallback.", apiErr);
+    } finally {
+      setIsFetchingPrice(false);
+    }
+  };
+
+  const handlePayment = async () => {
+    setIsProcessing(true);
 
     try {
-      // 🔥 MODALITÀ PRODUZIONE ATTIVA: TestMode disattivato 🔥
-      const isTestMode = false; 
-
-      const isPremium = selectedPlan === 'premium';
-      const daysToAdd = isPremium ? 365 : 30;
-      
-      // I prezzi esatti mostrati sulla tua Landing Page
-      const usdPrice = isPremium ? 149.90 : 14.90; 
-
-      let solAmountTarget = 0;
-
-      if (isTestMode) {
-          solAmountTarget = 0.001; // Solo per test
-      } else {
-          // CONVERSIONE LIVE DOLLARI -> SOL TRAMITE BINANCE
-          let solPriceUsd = 140; // Prezzo base di emergenza
-          try {
-            const solResp = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
-            if (solResp.ok) {
-                const solData = await solResp.json();
-                solPriceUsd = parseFloat(solData.price);
-            }
-          } catch (apiErr) {
-            console.warn("API Prezzo Binance irraggiungibile, uso prezzo di fallback.", apiErr);
-          }
-          
-          // Calcolo matematico per richiedere l'esatto importo in SOL
-          solAmountTarget = parseFloat((usdPrice / solPriceUsd).toFixed(4));
-          console.log(`💰 L'utente sta per pagare $${usdPrice}. Prezzo SOL: $${solPriceUsd} -> Totale: ${solAmountTarget} SOL`);
-      }
-
-      // Converte i SOL in Lamports (interi)
+      const solAmountTarget = parseFloat(getFinalSolPrice());
       const lamportsToPay = Math.floor(solAmountTarget * 1e9); 
       
-      // Connessione diretta e blindata tramite Helius
       const HELIUS_RPC = "https://mainnet.helius-rpc.com/?api-key=b85ff0ae-b208-4fe9-897b-1d7a446b9d36";
       const directConnection = new Connection(HELIUS_RPC, 'confirmed');
 
       const { blockhash, lastValidBlockHeight } = await directConnection.getLatestBlockhash('confirmed');
-
-      // 🎯 IL TUO WALLET DOVE ARRIVERANNO I SOLDI:
       const TARGET_FOUNDER_WALLET = new PublicKey("ERRYCEdzkYXcnCycVGYNmoQ2RHhdhi1wDfnFuRKHJ7QA");
       
       const transaction = new Transaction({
@@ -120,17 +145,14 @@ export const WalletProfile = () => {
           })
       );
 
-      // Apre Phantom
       const signature = await sendTransaction(transaction, directConnection);
       
-      // Conferma sulla Blockchain
       await directConnection.confirmTransaction({
         signature: signature,
         blockhash: blockhash,
         lastValidBlockHeight: lastValidBlockHeight
       }, 'confirmed');
 
-      // Invia la ricevuta al tuo Backend per creare l'account
       const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
       const verifyResp = await fetch(`${API_URL}/api/verify-payment`, {
           method: 'POST',
@@ -138,7 +160,9 @@ export const WalletProfile = () => {
           body: JSON.stringify({
               walletAddress: publicKey.toString(),
               signature: signature,
-              planType: selectedPlan
+              planType: checkoutPlan,
+              // INVIA IL CODICE SCONTO AL BACKEND!
+              affiliateCode: discountStatus === 'success' ? promoCode.toUpperCase() : null 
           })
       });
 
@@ -148,18 +172,19 @@ export const WalletProfile = () => {
           throw new Error(verifyData.error || "Server verification error");
       }
 
-      // Salva nel frontend e mostra il successo
       setLocalProData({ 
-          planType: selectedPlan, 
+          planType: checkoutPlan, 
           syncKey: verifyData.syncKey, 
           expiresAt: verifyData.expiresAt 
       });
       
-      if (selectedPlan === 'premium') {
+      if (checkoutPlan === 'premium') {
         showToast('success', 'INSTITUTIONAL TIER ACTIVATED 💎', 'Welcome to the elite. Paste your new Sync Key in the extension.');
       } else {
         showToast('success', 'SNIPER TIER ACTIVATED ⚡', 'Sniper mode engaged. Unlimited scans unlocked.');
       }
+      
+      setCheckoutPlan(null); // Chiude il modale in caso di successo
       
     } catch (err) {
       console.error("❌ TRANSACTION ERROR:", err);
@@ -198,7 +223,7 @@ export const WalletProfile = () => {
     <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-12 relative overflow-x-hidden">
       
       {/* CUSTOM TOAST NOTIFICATION */}
-      <div className={`fixed bottom-10 right-10 z-50 transition-all duration-500 transform ${toast.show ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
+      <div className={`fixed bottom-10 right-10 z-[200] transition-all duration-500 transform ${toast.show ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
         <div className={`bg-[#0a0a0a]/95 backdrop-blur-xl border p-5 rounded-2xl max-w-sm flex gap-4 items-start shadow-2xl ring-1 ring-white/5 ${toast.type === 'error' ? 'border-rose-500/30' : toast.title.includes('INSTITUTIONAL') ? 'border-purple-500/30' : 'border-emerald-500/30'}`}>
           <div className="text-2xl mt-0.5 animate-pulse">
             {toast.type === 'error' ? '❌' : toast.title.includes('INSTITUTIONAL') ? '💎' : '⚡'}
@@ -309,12 +334,11 @@ export const WalletProfile = () => {
             </ul>
             
             <button 
-              onClick={() => handleUpgrade('pro')}
-              disabled={isProcessing !== false || userData.planType === 'pro' || userData.planType === 'premium' || userData.planType === 'admin'}
+              onClick={() => openCheckoutModal('pro')}
+              disabled={userData.planType === 'pro' || userData.planType === 'premium' || userData.planType === 'admin'}
               className="w-full py-3 bg-[#111] text-emerald-400 border border-emerald-500/30 font-bold text-sm rounded-xl hover:bg-emerald-500/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isProcessing === 'pro' ? "Processing..." : 
-               userData.planType === 'pro' ? "Current Plan" : 
+              {userData.planType === 'pro' ? "Current Plan" : 
                (userData.planType === 'premium' || userData.planType === 'admin') ? "Included in Premium" : 
                "Activate PRO"}
             </button>
@@ -344,18 +368,104 @@ export const WalletProfile = () => {
             </ul>
             
             <button 
-              onClick={() => handleUpgrade('premium')}
-              disabled={isProcessing !== false || userData.planType === 'premium' || userData.planType === 'admin'}
+              onClick={() => openCheckoutModal('premium')}
+              disabled={userData.planType === 'premium' || userData.planType === 'admin'}
               className="w-full py-3 bg-purple-500 text-black font-black text-sm rounded-xl hover:bg-purple-400 transition-all shadow-[0_0_15px_rgba(168,85,247,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
             >
-              {isProcessing === 'premium' ? "Processing..." : 
-               (userData.planType === 'premium' || userData.planType === 'admin') ? "Current Plan" : 
-               "Activate PREMIUM"}
+              {(userData.planType === 'premium' || userData.planType === 'admin') ? "Current Plan" : "Activate PREMIUM"}
             </button>
           </div>
 
         </div>
       </div>
+
+      {/* ========================================= */}
+      {/* CHECKOUT MODAL (Finestra a comparsa) */}
+      {/* ========================================= */}
+      {checkoutPlan && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0a0a0a] border border-[#222] rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl relative">
+            
+            <button 
+              onClick={() => setCheckoutPlan(null)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-white"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">
+              Checkout: {checkoutPlan}
+            </h3>
+            
+            <p className="text-gray-500 text-xs mb-6">
+              Original Price: ${getBaseUsdPrice(checkoutPlan).toFixed(2)} USD
+            </p>
+
+            <div className="flex justify-between items-center mb-6 border-b border-[#222] pb-4">
+              <span className="text-gray-400 font-medium">Total Amount</span>
+              <span className={`text-3xl font-mono font-bold ${checkoutPlan === 'premium' ? 'text-purple-400' : 'text-emerald-400'}`}>
+                {isFetchingPrice ? (
+                  <span className="animate-pulse text-xl text-gray-500">Calculating...</span>
+                ) : (
+                  `${getFinalSolPrice()} SOL`
+                )}
+              </span>
+            </div>
+
+            <div className="mb-8">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Promo / Affiliate Code</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  placeholder="e.g. CRYPTOBOY10"
+                  className="flex-1 bg-[#111] border border-[#333] text-white px-4 py-3 rounded-xl uppercase focus:border-emerald-500 outline-none font-mono text-sm transition-colors"
+                />
+                <button 
+                  onClick={handleApplyPromo}
+                  className="px-6 py-3 bg-[#222] text-white font-bold rounded-xl border border-[#333] hover:bg-[#333] transition-colors"
+                >
+                  Apply
+                </button>
+              </div>
+              
+              {discountStatus === 'success' && (
+                <p className="text-emerald-400 text-xs mt-2 font-bold flex items-center gap-1">
+                  <span className="animate-pulse">🟢</span> Code applied! {validAffiliates[promoCode.toUpperCase()] * 100}% off.
+                </p>
+              )}
+              {discountStatus === 'error' && (
+                <p className="text-rose-500 text-xs mt-2 font-bold">❌ Invalid or expired code.</p>
+              )}
+            </div>
+
+            <button 
+              onClick={handlePayment}
+              disabled={isProcessing || isFetchingPrice}
+              className={`w-full py-4 font-black text-lg rounded-xl flex items-center justify-center gap-3 transition-all ${
+                isProcessing || isFetchingPrice
+                  ? 'bg-[#222] text-gray-500 cursor-not-allowed' 
+                  : checkoutPlan === 'premium' 
+                    ? 'bg-purple-500 text-black hover:scale-[1.02] shadow-[0_0_20px_rgba(168,85,247,0.3)]' 
+                    : 'bg-emerald-400 text-black hover:scale-[1.02] shadow-[0_0_20px_rgba(16,185,129,0.3)]'
+              }`}
+            >
+              {isProcessing ? 'Processing...' : 'Pay with Phantom'}
+              {!isProcessing && (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+              )}
+            </button>
+            
+            <p className="text-[10px] text-gray-600 text-center mt-4">
+              Live SOL price synced via Binance API. Ensure enough SOL for gas.
+            </p>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
