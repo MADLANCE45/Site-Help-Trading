@@ -70,9 +70,29 @@ const Pricing = () => {
     setIsProcessing(true);
     try {
       const finalPriceSOL = parseFloat(getFinalPrice());
-      const lamports = finalPriceSOL * 1000000000;
+      // Aggiunto Math.floor per evitare decimali periodici che fanno fallire la transazione
+      const lamports = Math.floor(finalPriceSOL * 1000000000); 
       
-      const transaction = new Transaction().add(
+      // 1. CONTROLLO SALDO (Previene la schermata rossa di Phantom)
+      const userBalance = await connection.getBalance(publicKey);
+      const networkFeeBase = 5000; // ~0.000005 SOL per le gas fee
+      
+      if (userBalance < lamports + networkFeeBase) {
+        setTransactionMessage({ 
+          type: 'error', 
+          text: 'Insufficient funds. Not enough SOL to cover the transaction and network fees.' 
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      // 2. RECUPERO BLOCKHASH FRESCO (Previene il caricamento infinito)
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+
+      const transaction = new Transaction({
+        recentBlockhash: blockhash,
+        feePayer: publicKey
+      }).add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: new PublicKey(TREASURY_WALLET),
@@ -82,6 +102,13 @@ const Pricing = () => {
 
       const signature = await sendTransaction(transaction, connection);
       console.log("Firma Transazione:", signature);
+
+      // 3. ATTESA DI CONFERMA (Garantisce che i soldi siano arrivati prima di dare la chiave)
+      await connection.confirmTransaction({
+        signature,
+        blockhash,
+        lastValidBlockHeight
+      }, 'confirmed');
 
       const generatedSyncKey = `ms-${checkoutPlan}-${Math.random().toString(36).substr(2, 9)}`;
       
@@ -97,11 +124,12 @@ const Pricing = () => {
       
     } catch (error) {
       console.error("Payment failed:", error);
-      // INVECE DELL'ALERT, MOSTRA L'ERRORE NEL MODALE
-      setTransactionMessage({ 
-        type: 'error', 
-        text: 'Transaction cancelled or rejected by wallet.' 
-      });
+      // Catturiamo se l'utente chiude il wallet manualmente o se la transazione fallisce
+      if (error.message && error.message.toLowerCase().includes("user rejected")) {
+        setTransactionMessage({ type: 'error', text: 'Payment cancelled by user.' });
+      } else {
+        setTransactionMessage({ type: 'error', text: 'Transaction failed or rejected by wallet.' });
+      }
     } finally {
       setIsProcessing(false);
     }

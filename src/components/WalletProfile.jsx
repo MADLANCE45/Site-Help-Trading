@@ -129,10 +129,19 @@ export const WalletProfile = () => {
       const solAmountTarget = parseFloat(getFinalSolPrice());
       const lamportsToPay = Math.floor(solAmountTarget * 1e9); 
       
-      const HELIUS_RPC = "https://mainnet.helius-rpc.com/?api-key=b85ff0ae-b208-4fe9-897b-1d7a446b9d36";
-      const directConnection = new Connection(HELIUS_RPC, 'confirmed');
+      const HELIUS_RPC = import.meta.env.VITE_HELIUS_RPC;
+const directConnection = new Connection(HELIUS_RPC, 'confirmed');
+// AGGIUNGI QUESTE 6 RIGHE: Controllo del saldo prima di disturbare Phantom
+const userBalance = await directConnection.getBalance(publicKey);
+const networkFeeBase = 5000; // ~0.000005 SOL in lamports
+if (userBalance < lamportsToPay + networkFeeBase) {
+    showToast('error', 'INSUFFICIENT FUNDS', 'Not enough SOL to cover the transaction + network fees.');
+    setIsProcessing(false);
+    return;
+}
 
-      const { blockhash, lastValidBlockHeight } = await directConnection.getLatestBlockhash('confirmed');
+const { blockhash, lastValidBlockHeight } = await directConnection.getLatestBlockhash('confirmed');
+// ... resto del tuo codice (transaction = new Transaction...)
       const TARGET_FOUNDER_WALLET = new PublicKey("ERRYCEdzkYXcnCycVGYNmoQ2RHhdhi1wDfnFuRKHJ7QA");
       
       const transaction = new Transaction({
