@@ -17,7 +17,7 @@ const handleInstallClick = () => {
     const userAgent = navigator.userAgent.toLowerCase();
     const chromeLink = "https://chromewebstore.google.com/detail/solana-pump-radar/mmghnjnoolonhfofffknckldjajjgidk";
     // Sostituisci questo quando hai il link Firefox
-    const firefoxLink = "https://addons.mozilla.org/firefox/addon/IL_TUO_ID_FIREFOX/"; 
+    const firefoxLink = "https://addons.mozilla.org/it/firefox/addon/solana-pump-radar/"; 
 
     if (userAgent.includes("firefox")) {
       window.open(firefoxLink, '_blank');
