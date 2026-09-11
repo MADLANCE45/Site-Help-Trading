@@ -52,19 +52,22 @@ const LandingPage = () => {
   // --- EFFETTO PING: Controlla il Backend ogni 10 secondi ---
   useEffect(() => {
     let isMounted = true;
+    let interval;
+
     const checkNetwork = async () => {
+      // Se la pagina non è visibile, salta il ping per risparmiare server
+      if (document.hidden) return; 
+
       const startTime = Date.now();
       const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
       
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
         const res = await fetch(`${API_URL}/api/health`, { signal: controller.signal });
         clearTimeout(timeoutId);
         
         if (!res.ok) throw new Error("Backend error");
-        
         const data = await res.json();
         const latency = Date.now() - startTime;
         
@@ -72,23 +75,32 @@ const LandingPage = () => {
           setNetworkPing(latency);
           setSystemHealth({
             status: latency > 800 ? 'degraded' : 'operational',
-            services: data.services
+            services: data.services || { radar: 100, deepseek: 100, gpt4o: 100, claude: 100 }
           });
         }
       } catch (err) {
         if (isMounted) {
           setNetworkPing('ERR');
-          setSystemHealth({
-            status: 'offline',
-            services: { radar: 0, deepseek: 0, gpt4o: 0, claude: 0 }
-          });
+          setSystemHealth({ status: 'offline', services: { radar: 0, deepseek: 0, gpt4o: 0, claude: 0 }});
         }
       }
     };
 
     checkNetwork(); 
-    const interval = setInterval(checkNetwork, 10000); 
-    return () => { isMounted = false; clearInterval(interval); };
+    // Alziamo a 20 secondi: l'utente non noterà la differenza, ma tu dimezzi il carico server
+    interval = setInterval(checkNetwork, 20000); 
+
+    // Riprendi il ping appena l'utente torna sulla scheda
+    const handleVisibilityChange = () => {
+      if (!document.hidden) checkNetwork();
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => { 
+      isMounted = false; 
+      clearInterval(interval); 
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   // Gestione Video Autoplay
@@ -591,11 +603,13 @@ const LandingPage = () => {
             onClick={(e) => e.stopPropagation()} 
           >
             <video 
-              src="/Video.mp4" 
-              autoPlay 
-              controls 
-              className="w-full h-full object-contain"
-            ></video>
+  src="/Video.mp4" 
+  autoPlay 
+  controls 
+  preload="none"
+  poster="/video-thumbnail.jpg"
+  className="w-full h-full object-contain"
+></video>
           </div>
         </div>
       )}
