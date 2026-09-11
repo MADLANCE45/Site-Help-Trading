@@ -94,7 +94,7 @@ const handleInstallClick = () => {
             sybilCorrelation = "0.02%";
         } else if (data.score >= 45) {
             englishFeedback = "Average execution frequency. WARNING: High slippage tolerance exposes wallet to sandwich attacks. Consider upgrading to Turbo Nodes.";
-            enhancedArchetype = "Retail Trader 👤";
+            enhancedArchetype = "Retail Trader ";
             mevExposure = "HIGH";
             sybilCorrelation = "14.5%";
         } else {

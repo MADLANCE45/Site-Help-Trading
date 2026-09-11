@@ -26,7 +26,8 @@ const LandingPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const videoRef = useRef(null);
-
+const [openFaq, setOpenFaq] = useState(null);
+const toggleFaq = (index) => setOpenFaq(openFaq === index ? null : index);
   // --- FUNZIONE INSTALLAZIONE ESTENSIONE ---
   const handleInstallClick = () => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -126,7 +127,29 @@ const LandingPage = () => {
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isModalOpen]);
+const [liveToast, setLiveToast] = useState({ show: false, message: '', type: 'success', time: '' });
 
+  // Generatore di FOMO (Simula rilevamenti in tempo reale ogni 8-15 secondi)
+  useEffect(() => {
+    const events = [
+      { m: "AI Core detected 4 hidden dev wallets on Pump.fun", t: "warning" },
+      { m: "Rug-pull prevented: 124 SOL liquidity drain flagged", t: "success" },
+      { m: "Trust Score 92/100 generated for new Raydium pool", t: "info" },
+      { m: "Micro-dumping alert triggered on DexScreener", t: "warning" }
+    ];
+    
+    const triggerToast = () => {
+      const randomEvent = events[Math.floor(Math.random() * events.length)];
+      setLiveToast({ show: true, message: randomEvent.m, type: randomEvent.t, time: 'Just now' });
+      
+      setTimeout(() => {
+        setLiveToast(prev => ({ ...prev, show: false }));
+      }, 4000); // Il toast scompare dopo 4 secondi
+    };
+
+    const interval = setInterval(triggerToast, 12000); // Appare ogni 12 secondi
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-emerald-500/30 overflow-x-hidden relative">
       
@@ -251,11 +274,21 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
           
           <div className="text-left z-20">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 mb-6 uppercase tracking-wider backdrop-blur-sm shadow-inner">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Live on Pump.fun & Raydium
-            </div>
             
+            {/* 1. RELEASE BADGE (Sopra il titolo principale) */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
+              <div 
+                onClick={() => window.open('https://x.com/H3lpTrading', '_blank')}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] sm:text-xs font-black text-emerald-400 uppercase tracking-widest backdrop-blur-sm shadow-inner cursor-pointer hover:bg-emerald-500/20 hover:scale-105 transition-all duration-300"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Meme Saver v1.3 is Live
+              </div>
+              <span className="text-gray-400 text-xs sm:text-sm font-medium flex items-center gap-2">
+                Added Robinhood Chain & AI Trust Score <span className="text-xl"></span>
+              </span>
+            </div>
+
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white tracking-tighter leading-[1.05] mb-6">
               Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Unfair</span><br/> Advantage.
             </h1>
@@ -276,41 +309,81 @@ const LandingPage = () => {
                 Open Dashboard
               </button>
             </div>
-          </div>
-
-          <div className="relative mx-auto w-full max-w-[340px] lg:max-w-[360px]">
-            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 blur-3xl rounded-[2rem] transform scale-105"></div>
             
-            <div className="relative bg-[#0a0a0a] rounded-2xl border border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,1)] overflow-hidden flex flex-col aspect-[10/16] ring-1 ring-white/5">
-              <div className="h-10 bg-[#161616] border-b border-white/5 flex items-center px-4 relative z-20 shrink-0">
-                <div className="flex gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] border border-black/20"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e] border border-black/20"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f] border border-black/20"></div>
+            {/* 2. SOCIAL PROOF PREMIUM (Sotto i bottoni) */}
+            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs font-medium text-gray-500">
+              <div className="flex -space-x-3">
+                <img src="/avatar1.png" alt="Trader" className="w-9 h-9 rounded-full border-2 border-[#050505] object-cover bg-gray-800 shadow-sm relative z-[4] hover:-translate-y-1 transition-transform" />
+                <img src="/avatar2.png" alt="Trader" className="w-9 h-9 rounded-full border-2 border-[#050505] object-cover bg-gray-800 shadow-sm relative z-[3] hover:-translate-y-1 transition-transform" />
+                <img src="/avatar3.png" alt="Trader" className="w-9 h-9 rounded-full border-2 border-[#050505] object-cover bg-gray-800 shadow-sm relative z-[2] hover:-translate-y-1 transition-transform" />
+                <img src="/avatar4.png" alt="Trader" className="w-9 h-9 rounded-full border-2 border-[#050505] object-cover bg-gray-800 shadow-sm relative z-[1] hover:-translate-y-1 transition-transform" />
+                
+                <div className="w-9 h-9 rounded-full border-2 border-[#050505] bg-[#111] flex items-center justify-center text-[10px] font-black text-emerald-400 relative z-[0] shadow-sm">
+                  +2k
                 </div>
-                <div className="absolute left-1/2 -translate-x-1/2 bg-[#050505] px-3 py-1 rounded-md border border-white/5 flex items-center gap-2">
-                  <img src="/meme.png" alt="icon" className="w-3 h-3 rounded-sm grayscale" />
-                  <span className="text-[9px] font-mono text-gray-400 tracking-widest">MEME SAVER</span>
+              </div>
+              
+              <div className="flex flex-col items-start gap-0.5">
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <svg key={star} className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-gray-400">Trusted by early alpha snipers</span>
+              </div>
+            </div>
+            {/* FINE SOCIAL PROOF */}
+            
+          </div>
+          
+          <div className="relative mx-auto w-full max-w-[340px] lg:max-w-[360px] group">
+            
+            {/* 1. Glow Dinamico: Colori allineati al brand (Smeraldo/Ciano) e reattivi all'hover */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/30 via-transparent to-cyan-500/30 blur-[80px] rounded-[3rem] transform scale-105 opacity-60 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+            
+            {/* 2. Cornice Principale: Raggio più morbido (24px) e ombra colorata smeraldo */}
+            <div className="relative bg-[#050505] rounded-[24px] border border-white/10 shadow-[0_20px_80px_-20px_rgba(16,185,129,0.25)] overflow-hidden flex flex-col aspect-[10/16] ring-1 ring-white/5 backdrop-blur-xl">
+              
+              {/* 3. Barra Superiore: Più alta (h-12), effetto vetro e pulsanti 3D */}
+              <div className="h-12 bg-white/[0.03] border-b border-white/5 flex items-center px-4 relative z-20 shrink-0 backdrop-blur-md">
+                <div className="flex gap-2">
+                  {/* Ombra interna per far sembrare i pallini dei veri bottoni hardware */}
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-[inset_0_1px_4px_rgba(0,0,0,0.6)]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-[inset_0_1px_4px_rgba(0,0,0,0.6)]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#27c93f] shadow-[inset_0_1px_4px_rgba(0,0,0,0.6)]"></div>
+                </div>
+                
+                {/* Badge centrale più leggibile e premium */}
+                <div className="absolute left-1/2 -translate-x-1/2 bg-black/40 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 shadow-inner">
+                  <img src="/meme.png" alt="icon" className="w-3.5 h-3.5 rounded object-cover" />
+                  <span className="text-[10px] font-bold text-gray-200 tracking-widest uppercase">Meme Saver</span>
                 </div>
               </div>
 
-              <div className="relative w-full flex-1 bg-[#050505] flex items-center justify-center">
+              {/* 4. Area Video: Aggiunta di un riflesso diagonale (Screen Glare) */}
+              <div className="relative w-full flex-1 bg-[#020202] flex items-center justify-center overflow-hidden">
                 <video 
                   src="/demo4k.mp4" 
                   autoPlay 
                   loop 
                   muted 
                   playsInline 
-                  className="w-full h-full object-cover object-center" 
+                  className="w-full h-full object-cover object-top" 
                 />
-                <div className="absolute inset-0 shadow-[inset_0_0_40px_rgba(0,0,0,0.95)] pointer-events-none"></div>
+                {/* Sottilissimo bordo interno bianco per separare il video dalla cornice nera */}
+                <div className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)] pointer-events-none"></div>
+                
+                {/* Effetto Riflesso Vetro: Passa sul video quando l'utente va in hover col mouse */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.05] to-transparent pointer-events-none translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* PLATFORM LOGOS */}
+      {/* PLATFORM LOGOS (Senza spazi enormi sotto) */}
       <section className="py-10 border-y border-white/5 bg-white/[0.01]">
         <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-center md:justify-between items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
           <div className="text-lg md:text-xl font-black tracking-widest uppercase">Pump.fun</div>
@@ -320,10 +393,10 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* FEATURES & SECONDARY VIDEO */}
-      <section id="features" className="py-32 px-6 relative">
+      {/* FEATURES & SECONDARY VIDEO (Padding ridotto da py-32 a py-20) */}
+      <section id="features" className="pt-20 pb-12 px-6 relative bg-[#050505]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-24">
+          <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
               Stop trading blind.
             </h2>
@@ -332,8 +405,9 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             
+            {/* VIDEO PLAYER */}
             <div 
               className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0a0a0a] aspect-video flex items-center justify-center group shadow-2xl ring-1 ring-white/5 cursor-pointer transform hover:scale-[1.02] transition-all duration-500"
               onClick={() => setIsModalOpen(true)}
@@ -353,58 +427,99 @@ const LandingPage = () => {
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </div>
-              
-              <div className="absolute bottom-6 left-6 text-xs font-bold text-gray-300 bg-[#050505]/80 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10">
-                Watch Full Demo <span className="text-emerald-400 ml-1">0:50</span>
-              </div>
             </div>
 
-            <div className="space-y-10">
+            {/* FEATURE LIST */}
+            <div className="space-y-8">
               <div className="flex gap-5 group">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 transition-all duration-300">
                   <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1.5 group-hover:text-emerald-400 transition-colors">Micro-Dumping Detector</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    Tracks silent movements of Dev-linked wallets. The algorithm detects when liquidity is fragmented and secretly dumped on retail.
-                  </p>
+                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1 group-hover:text-emerald-400 transition-colors">Micro-Dumping Detector</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">Tracks silent movements of Dev-linked wallets. Detects fragmented liquidity dumps.</p>
                 </div>
               </div>
 
               <div className="flex gap-5 group">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 transition-all duration-300">
                   <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1.5 group-hover:text-emerald-400 transition-colors">Instant Trust Score</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    Browse Pump.fun or DexScreener naturally. Our panel generates a real-time score from 1 to 100 based on 12 complex on-chain metrics.
-                  </p>
+                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1 group-hover:text-emerald-400 transition-colors">Instant Trust Score</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">Generates a real-time score from 1 to 100 based on 12 complex on-chain metrics.</p>
                 </div>
               </div>
 
               <div className="flex gap-5 group">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/50 transition-all duration-300">
                   <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1.5 group-hover:text-emerald-400 transition-colors">Bundle Supply Shield</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    Instantly discover if the Dev bought their own supply in the exact same launch block using Jito, preparing to drain the liquidity pool.
-                  </p>
+                  <h3 className="text-lg font-black text-gray-100 tracking-tight mb-1 group-hover:text-emerald-400 transition-colors">Bundle Supply Shield</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">Instantly discover if the Dev bought their own supply in the launch block using Jito.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* MATRIX COLLEGATA STRETTAMENTE ALLE FEATURES (Zero spazi morti) */}
+      <section className="pb-24 pt-8 px-6 bg-[#050505]">
+        <div className="max-w-4xl mx-auto">
+          {/* Titolo più piccolo e contestualizzato */}
+          <div className="text-center mb-8">
+            <h3 className="text-xl md:text-2xl font-black text-gray-300">The Ultimate Upgrade</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 bg-[#0a0a0a] rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            {/* The Old Way */}
+            <div className="p-6 sm:p-8 sm:border-r border-b sm:border-b-0 border-white/5 opacity-50 grayscale hover:grayscale-0 transition-all duration-300">
+              <div className="text-gray-500 font-black tracking-widest text-xs uppercase mb-5">The Old Way</div>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3 text-sm text-gray-400">
+                  <span className="text-rose-500 font-bold">✕</span> Copy-pasting addresses manually
+                </li>
+                <li className="flex items-start gap-3 text-sm text-gray-400">
+                  <span className="text-rose-500 font-bold">✕</span> Ignorant to Dev Micro-Dumping
+                </li>
+                <li className="flex items-start gap-3 text-sm text-gray-400">
+                  <span className="text-rose-500 font-bold">✕</span> Wastes 30 seconds per token
+                </li>
+              </ul>
+            </div>
+            
+            {/* The Meme Saver Way */}
+            <div className="p-6 sm:p-8 bg-gradient-to-br from-emerald-900/10 to-transparent relative">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl"></div>
+              <div className="text-emerald-400 font-black tracking-widest text-xs uppercase mb-5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                With Meme Saver
+              </div>
+              <ul className="space-y-3 relative z-10">
+                <li className="flex items-start gap-3 text-sm text-white font-medium">
+                  <span className="text-emerald-400 font-bold">✓</span> Direct In-Browser UI (Zero Clicks)
+                </li>
+                <li className="flex items-start gap-3 text-sm text-white font-medium">
+                  <span className="text-emerald-400 font-bold">✓</span> AI Sybil-Network detection
+                </li>
+                <li className="flex items-start gap-3 text-sm text-white font-medium">
+                  <span className="text-emerald-400 font-bold">✓</span> Sub-1 second Trust Score
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ROADMAP SECTION (Rimane inalterata) */}
 
       {/* ROADMAP SECTION */}
       <section id="roadmap" className="py-32 px-6 relative border-t border-white/5 bg-gradient-to-b from-[#050505] to-[#020202]">
@@ -497,7 +612,48 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-      
+      {/* SEO FAQ SECTION (Design Minimal) */}
+      <section className="py-24 px-6 border-t border-white/5 bg-[#050505]">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-4">Trading Memecoins 101</h2>
+            <p className="text-gray-400 text-sm font-light">Everything you need to know about surviving the trenches.</p>
+          </div>
+          
+          <div className="space-y-4">
+            {[
+              {
+                q: "How to trade memecoins safely on Pump.fun?",
+                a: "Trading early launches requires speed and data. Always verify the dev's on-chain history, check if the initial supply was bundled via Jito, and look for fragmented wallets. Meme Saver automates this process directly on your browser."
+              },
+              {
+                q: "What is developer micro-dumping?",
+                a: "Scammers often avoid selling everything at once (which triggers panic). Instead, they distribute tokens to 10-20 hidden wallets and sell small amounts (micro-dumping) every few minutes. Our terminal flags these Sybil networks instantly."
+              },
+              {
+                q: "Why do I need an AI Trust Score?",
+                a: "Raw data like 'Holder 1 has 4%' isn't enough anymore. Our AI Core processes 12 different metrics—including liquidity lock status, mint authority, and social sentiment—to give you a simple 1-100 safety rating before you risk your SOL."
+              }
+            ].map((faq, index) => (
+              <div 
+                key={index} 
+                className="bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 hover:border-white/10 cursor-pointer"
+                onClick={() => toggleFaq(index)}
+              >
+                <div className="p-5 flex justify-between items-center">
+                  <h3 className="text-sm md:text-base font-bold text-gray-200">{faq.q}</h3>
+                  <svg className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                <div className={`px-5 overflow-hidden transition-all duration-300 ease-in-out ${openFaq === index ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <p className="text-sm text-gray-500 font-light leading-relaxed">{faq.a}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       {/* FOOTER & LEGAL DISCLAIMER */}
       <footer className="border-t border-white/5 bg-[#020202] pt-20 pb-10 px-6">
         <div className="max-w-7xl mx-auto">
@@ -613,7 +769,20 @@ const LandingPage = () => {
           </div>
         </div>
       )}
-
+{/* LIVE INTERCEPT TOAST */}
+      <div className={`fixed bottom-6 left-6 z-[100] transition-all duration-700 pointer-events-none ${liveToast.show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className="bg-[#0a0a0a]/90 backdrop-blur-md border border-white/10 p-3 rounded-2xl shadow-2xl flex items-center gap-3 max-w-sm">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${liveToast.type === 'warning' ? 'bg-amber-500/20 text-amber-500' : liveToast.type === 'success' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-blue-500/20 text-blue-500'}`}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-xs font-bold text-white leading-tight">{liveToast.message}</p>
+            <p className="text-[10px] font-mono text-gray-500 mt-0.5">{liveToast.time} • Automated Scan</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
