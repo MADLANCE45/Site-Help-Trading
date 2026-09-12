@@ -6,7 +6,7 @@ import { Analytics } from '@vercel/analytics/react';
 // Layout e Sicurezza
 import AppLayout from './components/AppLayout';
 import AuthGuard from './components/AuthGuard';
-
+import MaintenanceBanner from './components/MaintenanceBanner';
 // Pagine
 import LandingPage from './components/LandingPage';
 import DashboardOverview from './components/Dashboard'; 
@@ -15,34 +15,47 @@ import Leaderboard from './components/Leaderboard';
 import WalletProfile from './components/WalletProfile';
 import Pricing from './components/Pricing';
 
+// 🚨 INTERRUTTORE DI MANUTENZIONE PER LA DASHBOARD
+// Lascialo a 'true' finché non risolvi il backend. Mettilo a 'false' per riattivare tutto.
+const IS_DASHBOARD_MAINTENANCE = false;
+
 function App() {
   return (
     <SolanaProvider>
       <Router>
         <Routes>
           {/* ========================================== */}
-          {/* ROTTE PUBBLICHE (Accessibili a Google e agli utenti senza wallet) */}
+          {/* ROTTE PUBBLICHE (Sempre attive per Landing e SEO) */}
           {/* ========================================== */}
           <Route path="/" element={<LandingPage />} />
-          
-          {/* ✅ LA TUA NUOVA ROTTA PRIVACY POLICY */}
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           
+          {/* ========================================== */}
+          {/* ROTTE DELLA DASHBOARD (Con filtro di manutenzione) */}
+          {/* ========================================== */}
+          <Route 
+            path="/dashboard" 
+            element={<AppLayout>{IS_DASHBOARD_MAINTENANCE ? <MaintenanceBanner /> : <DashboardOverview />}</AppLayout>} 
+          />
+          <Route 
+            path="/dashboard/radar" 
+            element={<AppLayout>{IS_DASHBOARD_MAINTENANCE ? <MaintenanceBanner /> : <Radar />}</AppLayout>} 
+          />
+          <Route 
+            path="/dashboard/leaderboard" 
+            element={<AppLayout>{IS_DASHBOARD_MAINTENANCE ? <MaintenanceBanner /> : <Leaderboard />}</AppLayout>} 
+          />
+          <Route 
+            path="/dashboard/wallet" 
+            element={<AppLayout>{IS_DASHBOARD_MAINTENANCE ? <MaintenanceBanner /> : <WalletProfile />}</AppLayout>} 
+          />
+          <Route 
+            path="/dashboard/pricing" 
+            element={<AppLayout>{IS_DASHBOARD_MAINTENANCE ? <MaintenanceBanner /> : <Pricing />}</AppLayout>} 
+          />
           
           {/* ========================================== */}
-          {/* ROTTE PRIVATE DELLA DASHBOARD */}
-          {/* ========================================== */}
-          <Route path="/dashboard" element={<AppLayout><DashboardOverview /></AppLayout>} />
-          <Route path="/dashboard/radar" element={<AppLayout><Radar /></AppLayout>} />
-          <Route path="/dashboard/leaderboard" element={<AppLayout><Leaderboard /></AppLayout>} />
-          <Route path="/dashboard/wallet" element={<AppLayout><WalletProfile /></AppLayout>} />
-          
-          {/* ROTTA PRICING CORRETTA: Inserita prima del fallback */}
-          <Route path="/dashboard/pricing" element={<AppLayout><Pricing /></AppLayout>} />
-          
-          
-          {/* ========================================== */}
-          {/* 🛑 FALLBACK: Rimanda alla home per URL inesistenti. DEVE stare in fondo! */}
+          {/* 🛑 FALLBACK */}
           {/* ========================================== */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
