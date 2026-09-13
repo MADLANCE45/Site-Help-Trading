@@ -14,14 +14,11 @@ const Pricing = () => {
   const [promoCode, setPromoCode] = useState('');
   const [discountStatus, setDiscountStatus] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  // NUOVO: Stato per i messaggi eleganti invece di alert()
   const [transactionMessage, setTransactionMessage] = useState({ type: null, text: '' }); 
 
-  const PLAN_PRICES = {
-    pro: 0.10,      
-    premium: 1.00   
-  };
+  // --- STATI PREZZO DINAMICO ---
+  const [liveSolPrice, setLiveSolPrice] = useState(140); // Prezzo fallback
+  const [isFetchingPrice, setIsFetchingPrice] = useState(false);
 
   const TREASURY_WALLET = "ERRYCEdzkYXcnCycVGYNmoQ2RHhdhi1wDfnFuRKHJ7QA"; 
 
@@ -31,14 +28,22 @@ const Pricing = () => {
     'CoinHub': 0.10
   };
 
-  const currentBasePrice = checkoutPlan ? PLAN_PRICES[checkoutPlan] : 0;
-  
-  const getFinalPrice = () => {
+  // --- LOGICA DI CALCOLO USD -> SOL ---
+  const getBaseUsdPrice = (plan) => plan === 'premium' ? 149.90 : 14.90;
+
+  const getFinalUsdPrice = () => {
+    if (!checkoutPlan) return 0;
+    let price = getBaseUsdPrice(checkoutPlan);
     if (discountStatus === 'success' && validAffiliates[promoCode.toUpperCase()]) {
-      const discount = currentBasePrice * validAffiliates[promoCode.toUpperCase()];
-      return (currentBasePrice - discount).toFixed(3);
+      price = price * (1 - validAffiliates[promoCode.toUpperCase()]);
     }
-    return currentBasePrice.toFixed(3);
+    return price;
+  };
+
+  const getFinalSolPrice = () => {
+    if (!checkoutPlan) return "0.0000";
+    const usd = getFinalUsdPrice();
+    return (usd / liveSolPrice).toFixed(4); // Calcolo esatto dei decimali SOL
   };
 
   const handleApplyPromo = () => {
@@ -50,16 +55,28 @@ const Pricing = () => {
     }
   };
 
-  // Funzione per resettare tutto quando si apre/chiude il modale
-  const openModal = (plan) => {
+  // APERTURA MODALE E FETCH PREZZO SOLANA IN TEMPO REALE
+  const openModal = async (plan) => {
     setCheckoutPlan(plan);
     setDiscountStatus(null);
     setPromoCode('');
     setTransactionMessage({ type: null, text: '' });
+    setIsFetchingPrice(true);
+    
+    try {
+      const solResp = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
+      if (solResp.ok) {
+          const solData = await solResp.json();
+          setLiveSolPrice(parseFloat(solData.price));
+      }
+    } catch (apiErr) {
+      console.warn("Binance API unreachable, using fallback price.", apiErr);
+    } finally {
+      setIsFetchingPrice(false);
+    }
   };
 
   const handlePayment = async () => {
-    // Reset del messaggio precedente
     setTransactionMessage({ type: null, text: '' });
 
     if (!publicKey) {
@@ -69,15 +86,14 @@ const Pricing = () => {
 
     setIsProcessing(true);
     try {
-      const finalPriceSOL = parseFloat(getFinalPrice());
-      // Aggiunto Math.floor per evitare decimali periodici che fanno fallire la transazione
-      const lamports = Math.floor(finalPriceSOL * 1000000000); 
+      const solAmountTarget = parseFloat(getFinalSolPrice());
+      const lamportsToPay = Math.floor(solAmountTarget * 1e9); 
       
-      // 1. CONTROLLO SALDO (Previene la schermata rossa di Phantom)
+      // 1. CONTROLLO SALDO E GAS FEES
       const userBalance = await connection.getBalance(publicKey);
-      const networkFeeBase = 5000; // ~0.000005 SOL per le gas fee
+      const networkFeeBase = 5000; 
       
-      if (userBalance < lamports + networkFeeBase) {
+      if (userBalance < lamportsToPay + networkFeeBase) {
         setTransactionMessage({ 
           type: 'error', 
           text: 'Insufficient funds. Not enough SOL to cover the transaction and network fees.' 
@@ -86,7 +102,7 @@ const Pricing = () => {
         return;
       }
 
-      // 2. RECUPERO BLOCKHASH FRESCO (Previene il caricamento infinito)
+      // 2. TRANSAZIONE
       const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
 
       const transaction = new Transaction({
@@ -96,14 +112,13 @@ const Pricing = () => {
         SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: new PublicKey(TREASURY_WALLET),
-          lamports: lamports,
+          lamports: lamportsToPay,
         })
       );
 
       const signature = await sendTransaction(transaction, connection);
-      console.log("Firma Transazione:", signature);
 
-      // 3. ATTESA DI CONFERMA (Garantisce che i soldi siano arrivati prima di dare la chiave)
+      // 3. CONFERMA ON-CHAIN
       await connection.confirmTransaction({
         signature,
         blockhash,
@@ -112,19 +127,12 @@ const Pricing = () => {
 
       const generatedSyncKey = `ms-${checkoutPlan}-${Math.random().toString(36).substr(2, 9)}`;
       
-      /* 
-      await supabase.from('users').insert({ ... });
-      */
-
-      // INVECE DELL'ALERT, MOSTRA IL SUCCESSO NEL MODALE
       setTransactionMessage({ 
         type: 'success', 
         text: `Payment Successful! \nYour Sync Key is: ${generatedSyncKey}\nCopy and save it securely.`
       });
       
     } catch (error) {
-      console.error("Payment failed:", error);
-      // Catturiamo se l'utente chiude il wallet manualmente o se la transazione fallisce
       if (error.message && error.message.toLowerCase().includes("user rejected")) {
         setTransactionMessage({ type: 'error', text: 'Payment cancelled by user.' });
       } else {
@@ -183,7 +191,7 @@ const Pricing = () => {
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600 line-through">
                 <span className="mt-0.5 flex-shrink-0">✕</span> 
-                <span className="leading-relaxed">Pro Radar</span>
+                <span className="leading-relaxed">Sniper Radar</span>
               </li>
             </ul>
             
@@ -202,7 +210,6 @@ const Pricing = () => {
             </div>
             
             <h3 className="text-2xl font-black text-white mb-2">Premium</h3>
-            {/* Aggiunta descrizione tecnica presa dal WalletProfile */}
             <p className="text-sm text-gray-400 mb-8 font-light">Engineered for maximum reliability and unthrottled access during peak network congestion.</p>
             
             <div className="mb-8">
@@ -218,7 +225,6 @@ const Pricing = () => {
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
                 <span className="leading-relaxed"><strong className="text-white">Unlimited</strong> Deep-Scans & Volume Analysis</span>
               </li>
-              {/* CORREZIONE: Institutional AI Core allineato */}
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
                 <span className="leading-relaxed"><strong className="text-white">Institutional AI Core</strong> (GPT-4o & Claude 3.5 Sonnet)</span>
@@ -227,12 +233,10 @@ const Pricing = () => {
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
                 <span className="leading-relaxed"><strong className="text-white">Priority Execution Queue</strong> (Bypass server traffic)</span>
               </li>
-              {/* CORREZIONE: Numero di Whales tracciati esplicitato */}
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
                 <span className="leading-relaxed">Advanced Syndicate Spy <strong className="text-white">(Track up to 10 Whales)</strong></span>
               </li>
-              {/* CORREZIONE: Aggiunto Early Access */}
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
                 <span className="leading-relaxed">Early Access: Terminal Webhooks & Alpha Features</span>
@@ -249,7 +253,7 @@ const Pricing = () => {
 
           {/* SNIPER PLAN (PRO) */}
           <div className="bg-[#050505] border border-white/5 rounded-3xl p-8 md:p-10 flex flex-col hover:border-emerald-500/30 transition-colors shadow-2xl ring-1 ring-white/5">
-            <h3 className="text-2xl font-black text-white mb-2">PRO</h3>
+            <h3 className="text-2xl font-black text-white mb-2">Sniper</h3>
             <p className="text-sm text-gray-500 mb-8 font-light">Remove the limits. Never get rugged again.</p>
             
             <div className="mb-8">
@@ -269,12 +273,10 @@ const Pricing = () => {
                 <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
                 <span className="leading-relaxed">Standard AI Model (DeepSeek)</span>
               </li>
-              {/* CORREZIONE: Testo allineato a "Spy Radar (1 Wallet)" */}
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
                 <span className="leading-relaxed">Spy Radar (1 Wallet)</span>
               </li>
-              {/* CORREZIONE: Aggiunto Jito MEV Shield */}
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
                 <span className="leading-relaxed">Jito MEV Shield</span>
@@ -292,7 +294,7 @@ const Pricing = () => {
         </div>
       </div>
 
-      {/* CHECKOUT MODAL CON ERRORI STILIZZATI */}
+      {/* CHECKOUT MODAL CON PREZZO DINAMICO */}
       {checkoutPlan && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-[#0a0a0a] border border-[#222] rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl relative">
@@ -310,7 +312,18 @@ const Pricing = () => {
 
             <div className="flex justify-between items-center mb-6 border-b border-[#222] pb-4">
               <span className="text-gray-400 font-medium">Total Amount</span>
-              <span className="text-3xl font-mono font-bold text-emerald-400">{getFinalPrice()} SOL</span>
+              <div className="text-right">
+                <div className={`text-3xl font-mono font-bold ${checkoutPlan === 'premium' ? 'text-purple-400' : 'text-emerald-400'}`}>
+                  {isFetchingPrice ? (
+                    <span className="animate-pulse text-xl text-gray-500">Calculating...</span>
+                  ) : (
+                    `${getFinalSolPrice()} SOL`
+                  )}
+                </div>
+                <div className="text-xs text-gray-500 font-medium mt-1">
+                  ≈ ${getFinalUsdPrice().toFixed(2)} USD
+                </div>
+              </div>
             </div>
 
             <div className="mb-8">
@@ -343,11 +356,13 @@ const Pricing = () => {
 
             <button 
               onClick={handlePayment}
-              disabled={isProcessing}
+              disabled={isProcessing || isFetchingPrice}
               className={`w-full py-4 font-black text-lg rounded-xl flex items-center justify-center gap-3 transition-all ${
-                isProcessing 
+                isProcessing || isFetchingPrice
                   ? 'bg-[#222] text-gray-500 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-emerald-400 to-cyan-500 text-black hover:scale-[1.02] shadow-[0_0_20px_rgba(16,185,129,0.3)]'
+                  : checkoutPlan === 'premium'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-black hover:scale-[1.02] shadow-[0_0_20px_rgba(168,85,247,0.3)]'
+                    : 'bg-gradient-to-r from-emerald-400 to-cyan-500 text-black hover:scale-[1.02] shadow-[0_0_20px_rgba(16,185,129,0.3)]'
               }`}
             >
               {isProcessing ? 'Processing...' : 'Pay with Phantom'}
