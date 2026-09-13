@@ -154,6 +154,7 @@ const Pricing = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           
+          {/* SCOUT PLAN (FREE) */}
           <div className="bg-[#050505] border border-white/5 rounded-3xl p-8 md:p-10 flex flex-col hover:border-white/10 transition-colors shadow-2xl ring-1 ring-white/5">
             <h3 className="text-2xl font-black text-white mb-2">Scout</h3>
             <p className="text-sm text-gray-500 mb-8 font-light">Test the waters. Perfect for casual traders.</p>
@@ -182,7 +183,7 @@ const Pricing = () => {
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600 line-through">
                 <span className="mt-0.5 flex-shrink-0">✕</span> 
-                <span className="leading-relaxed">Sniper Radar</span>
+                <span className="leading-relaxed">Pro Radar</span>
               </li>
             </ul>
             
@@ -194,13 +195,15 @@ const Pricing = () => {
             </button>
           </div>
 
+          {/* PREMIUM PLAN */}
           <div className="relative bg-gradient-to-b from-[#11081c] to-[#050505] border border-purple-500/50 rounded-3xl p-8 md:p-10 flex flex-col transform md:-translate-y-4 shadow-[0_0_50px_rgba(168,85,247,0.15)] z-20 ring-1 ring-white/5">
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-500 text-black text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
               Best Value
             </div>
             
             <h3 className="text-2xl font-black text-white mb-2">Premium</h3>
-            <p className="text-sm text-gray-400 mb-8 font-light">The ultimate unfair advantage for serious snipers.</p>
+            {/* Aggiunta descrizione tecnica presa dal WalletProfile */}
+            <p className="text-sm text-gray-400 mb-8 font-light">Engineered for maximum reliability and unthrottled access during peak network congestion.</p>
             
             <div className="mb-8">
               <div className="flex items-end gap-2 mb-2">
@@ -215,17 +218,24 @@ const Pricing = () => {
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
                 <span className="leading-relaxed"><strong className="text-white">Unlimited</strong> Deep-Scans & Volume Analysis</span>
               </li>
+              {/* CORREZIONE: Institutional AI Core allineato */}
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
-                <span className="leading-relaxed"><strong className="text-white">Institutional AI Core</strong></span>
+                <span className="leading-relaxed"><strong className="text-white">Institutional AI Core</strong> (GPT-4o & Claude 3.5 Sonnet)</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
-                <span className="leading-relaxed"><strong className="text-white">Priority Execution Queue</strong> (Bypass traffic)</span>
+                <span className="leading-relaxed"><strong className="text-white">Priority Execution Queue</strong> (Bypass server traffic)</span>
               </li>
+              {/* CORREZIONE: Numero di Whales tracciati esplicitato */}
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
-                <span className="leading-relaxed">Advanced Syndicate Spy (Track Whales)</span>
+                <span className="leading-relaxed">Advanced Syndicate Spy <strong className="text-white">(Track up to 10 Whales)</strong></span>
+              </li>
+              {/* CORREZIONE: Aggiunto Early Access */}
+              <li className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-purple-400 mt-0.5 flex-shrink-0 text-base">✦</span> 
+                <span className="leading-relaxed">Early Access: Terminal Webhooks & Alpha Features</span>
               </li>
             </ul>
             
@@ -237,8 +247,9 @@ const Pricing = () => {
             </button>
           </div>
 
+          {/* SNIPER PLAN (PRO) */}
           <div className="bg-[#050505] border border-white/5 rounded-3xl p-8 md:p-10 flex flex-col hover:border-emerald-500/30 transition-colors shadow-2xl ring-1 ring-white/5">
-            <h3 className="text-2xl font-black text-white mb-2">Sniper</h3>
+            <h3 className="text-2xl font-black text-white mb-2">PRO</h3>
             <p className="text-sm text-gray-500 mb-8 font-light">Remove the limits. Never get rugged again.</p>
             
             <div className="mb-8">
@@ -258,9 +269,15 @@ const Pricing = () => {
                 <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
                 <span className="leading-relaxed">Standard AI Model (DeepSeek)</span>
               </li>
+              {/* CORREZIONE: Testo allineato a "Spy Radar (1 Wallet)" */}
               <li className="flex items-start gap-3 text-sm text-gray-300">
                 <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
-                <span className="leading-relaxed">1x Whale Spy Radar</span>
+                <span className="leading-relaxed">Spy Radar (1 Wallet)</span>
+              </li>
+              {/* CORREZIONE: Aggiunto Jito MEV Shield */}
+              <li className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> 
+                <span className="leading-relaxed">Jito MEV Shield</span>
               </li>
             </ul>
             
