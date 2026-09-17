@@ -1,21 +1,22 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// --- COMPONENTE GRAFICO: Le barre verticali stile Solana Status ---
 const StatusBars = ({ healthPercentage }) => {
+  // Stabilizza il calcolo randomico
+  const bars = React.useMemo(() => {
+    return [...Array(24)].map(() => Math.random() * 100 > healthPercentage);
+  }, [healthPercentage]);
+
   return (
     <div className="flex items-end gap-[2px] h-4">
-      {[...Array(24)].map((_, i) => {
-        const isAnomaly = Math.random() * 100 > healthPercentage;
-        return (
-          <div 
-            key={i} 
-            className={`w-1 rounded-sm transition-all duration-500 ${
-              isAnomaly ? 'h-2 bg-amber-500' : 'h-4 bg-emerald-500'
-            }`}
-          ></div>
-        );
-      })}
+      {bars.map((isAnomaly, i) => (
+        <div 
+          key={i} 
+          className={`w-1 rounded-sm transition-all duration-500 ${
+            isAnomaly ? 'h-2 bg-amber-500' : 'h-4 bg-emerald-500'
+          }`}
+        ></div>
+      ))}
     </div>
   );
 };
@@ -282,10 +283,10 @@ const [liveToast, setLiveToast] = useState({ show: false, message: '', type: 'su
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] sm:text-xs font-black text-emerald-400 uppercase tracking-widest backdrop-blur-sm shadow-inner cursor-pointer hover:bg-emerald-500/20 hover:scale-105 transition-all duration-300"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Meme Saver v1.3 is Live
+                Meme Saver v1.4 is Live
               </div>
               <span className="text-gray-400 text-xs sm:text-sm font-medium flex items-center gap-2">
-                Added Robinhood Chain & AI Trust Score <span className="text-xl"></span>
+                Added Jito Bundle Tracking & Dev Micro-Dumping Radar <span className="text-xl"></span>
               </span>
             </div>
 
