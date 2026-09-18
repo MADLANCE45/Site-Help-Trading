@@ -30,7 +30,8 @@ export const WalletProfile = () => {
   const validAffiliates = {
     'CRYPTOBOY10': 0.10,
     'WHALE20': 0.20,
-    'CoinHub': 0.10
+    'CoinHub': 0.10,
+    'SAGE': 0.10
   };
 
   useEffect(() => {
@@ -163,24 +164,28 @@ const { blockhash, lastValidBlockHeight } = await directConnection.getLatestBloc
         lastValidBlockHeight: lastValidBlockHeight
       }, 'confirmed');
 
-      const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
-      const verifyResp = await fetch(`${API_URL}/api/verify-payment`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-              walletAddress: publicKey.toString(),
-              signature: signature,
-              planType: checkoutPlan,
-              // INVIA IL CODICE SCONTO AL BACKEND!
-              affiliateCode: discountStatus === 'success' ? promoCode.toUpperCase() : null 
-          })
-      });
+      // Dentro Pricing.jsx, dopo la conferma della transazione:
+const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
+const verifyResp = await fetch(`${API_URL}/api/verify-payment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        walletAddress: publicKey.toString(),
+        signature: signature,
+        planType: checkoutPlan,
+        affiliateCode: discountStatus === 'success' ? promoCode.toUpperCase() : null 
+    })
+});
 
-      const verifyData = await verifyResp.json();
+const verifyData = await verifyResp.json();
+if (!verifyResp.ok || !verifyData.success) {
+    throw new Error(verifyData.error || "Server verification error");
+}
 
-      if (!verifyResp.ok || !verifyData.success) {
-          throw new Error(verifyData.error || "Server verification error");
-      }
+setTransactionMessage({ 
+  type: 'success', 
+  text: `Payment Successful! \nYour Sync Key is: ${verifyData.syncKey}\nCopy and save it securely.`
+});
 
       setLocalProData({ 
           planType: checkoutPlan, 
