@@ -89,8 +89,13 @@ const Pricing = () => {
       const solAmountTarget = parseFloat(getFinalSolPrice());
       const lamportsToPay = Math.floor(solAmountTarget * 1e9); 
       
-      // 1. CONTROLLO SALDO E GAS FEES
-      const userBalance = await connection.getBalance(publicKey);
+      // 1. USA L'RPC PRIVATO (Invece di quello pubblico che va in blocco)
+      // Assicurati di avere VITE_HELIUS_RPC nel tuo file .env
+      const rpcUrl = import.meta.env.VITE_HELIUS_RPC || "https://api.mainnet-beta.solana.com";
+      const directConnection = new Connection(rpcUrl, 'confirmed');
+      
+      // 2. CONTROLLO SALDO E GAS FEES
+      const userBalance = await directConnection.getBalance(publicKey);
       const networkFeeBase = 5000; 
       
       if (userBalance < lamportsToPay + networkFeeBase) {
@@ -102,8 +107,8 @@ const Pricing = () => {
         return;
       }
 
-      // 2. TRANSAZIONE
-      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+      // 3. TRANSAZIONE (Se questo fallisce ora, vedrai l'errore in console)
+      const { blockhash, lastValidBlockHeight } = await directConnection.getLatestBlockhash('confirmed');
 
       const transaction = new Transaction({
         recentBlockhash: blockhash,
@@ -116,10 +121,11 @@ const Pricing = () => {
         })
       );
 
-      const signature = await sendTransaction(transaction, connection);
+      // 4. APERTURA PHANTOM
+      const signature = await sendTransaction(transaction, directConnection);
 
-      // 3. CONFERMA ON-CHAIN
-      await connection.confirmTransaction({
+      // 5. CONFERMA ON-CHAIN
+      await directConnection.confirmTransaction({
         signature,
         blockhash,
         lastValidBlockHeight
@@ -133,16 +139,19 @@ const Pricing = () => {
       });
       
     } catch (error) {
+      // LOG FONDAMENTALE PER IL DEBUGGING
+      console.error("ERRORE DETTAGLIATO TRANSAZIONE:", error);
+      
       if (error.message && error.message.toLowerCase().includes("user rejected")) {
         setTransactionMessage({ type: 'error', text: 'Payment cancelled by user.' });
       } else {
-        setTransactionMessage({ type: 'error', text: 'Transaction failed or rejected by wallet.' });
+        // Mostra l'errore reale se non è un rifiuto dell'utente
+        setTransactionMessage({ type: 'error', text: `Error: ${error.message || 'Transaction failed.'}` });
       }
     } finally {
       setIsProcessing(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-[#020202] text-gray-200 py-24 px-6 relative overflow-x-hidden">
       

@@ -14,7 +14,7 @@ import Radar from './components/Radar';
 import Leaderboard from './components/Leaderboard';
 import WalletProfile from './components/WalletProfile';
 import Pricing from './components/Pricing';
-
+import Docs from './components/Docs';
 // 🚨 INTERRUTTORE DI MANUTENZIONE PER LA DASHBOARD
 // Lascialo a 'true' finché non risolvi il backend. Mettilo a 'false' per riattivare tutto.
 const IS_DASHBOARD_MAINTENANCE = false;
@@ -29,7 +29,7 @@ function App() {
           {/* ========================================== */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          
+          <Route path="/docs" element={<Docs />} />
           {/* ========================================== */}
           {/* ROTTE DELLA DASHBOARD (Con filtro di manutenzione) */}
           {/* ========================================== */}

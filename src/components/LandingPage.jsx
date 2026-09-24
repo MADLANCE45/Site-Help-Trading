@@ -191,7 +191,12 @@ const [liveToast, setLiveToast] = useState({ show: false, message: '', type: 'su
             >
               Pricing <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[9px] px-2 py-0.5 rounded uppercase tracking-wider font-bold">Pro</span>
             </span>
-            <span className="hover:text-white transition-colors cursor-pointer tracking-wide opacity-50">Docs API</span>
+            <span 
+            onClick={() => navigate('/docs')} 
+            className="hover:text-white transition-colors cursor-pointer tracking-wide"
+            >
+           Docs API
+          </span>
           </div>
           
           <div className="flex items-center gap-4">
@@ -283,7 +288,7 @@ const [liveToast, setLiveToast] = useState({ show: false, message: '', type: 'su
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] sm:text-xs font-black text-emerald-400 uppercase tracking-widest backdrop-blur-sm shadow-inner cursor-pointer hover:bg-emerald-500/20 hover:scale-105 transition-all duration-300"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Meme Saver v1.4 is Live
+                Meme Saver v1.6 is Live
               </div>
               <span className="text-gray-400 text-xs sm:text-sm font-medium flex items-center gap-2">
                 Added Jito Bundle Tracking & Dev Micro-Dumping Radar <span className="text-xl"></span>
