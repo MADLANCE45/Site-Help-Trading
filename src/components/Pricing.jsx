@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey, SystemProgram, Transaction, Connection } from '@solana/web3.js';// import { supabase } from '../supabaseClient'; 
+import { PublicKey, SystemProgram, Transaction, Connection } from '@solana/web3.js';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
+
 const Pricing = () => {
   const navigate = useNavigate();
   const { publicKey, sendTransaction } = useWallet();
@@ -17,7 +18,7 @@ const Pricing = () => {
   const [transactionMessage, setTransactionMessage] = useState({ type: null, text: '' }); 
 
   // --- STATI PREZZO DINAMICO ---
-  const [liveSolPrice, setLiveSolPrice] = useState(140); // Prezzo fallback
+  const [liveSolPrice, setLiveSolPrice] = useState(140); 
   const [isFetchingPrice, setIsFetchingPrice] = useState(false);
 
   const TREASURY_WALLET = "ERRYCEdzkYXcnCycVGYNmoQ2RHhdhi1wDfnFuRKHJ7QA"; 
@@ -25,7 +26,8 @@ const Pricing = () => {
   const validAffiliates = {
     'CRYPTOBOY10': 0.10,
     'WHALE20': 0.20,
-    'CoinHub': 0.10
+    'COINHUB': 0.10, // TUTTO MAIUSCOLO
+    'SAGE': 0.10
   };
 
   // --- LOGICA DI CALCOLO USD -> SOL ---
@@ -43,7 +45,7 @@ const Pricing = () => {
   const getFinalSolPrice = () => {
     if (!checkoutPlan) return "0.0000";
     const usd = getFinalUsdPrice();
-    return (usd / liveSolPrice).toFixed(4); // Calcolo esatto dei decimali SOL
+    return (usd / liveSolPrice).toFixed(4);
   };
 
   const handleApplyPromo = () => {
@@ -79,9 +81,8 @@ const Pricing = () => {
   const handlePayment = async () => {
     setTransactionMessage({ type: null, text: '' });
 
-    // SE NON È CONNESSO, APRE IL POPUP DI PHANTOM AUTOMATICAMENTE
     if (!publicKey) {
-      setVisible(true); 
+      setVisible(true);
       return;
     }
 
@@ -90,12 +91,9 @@ const Pricing = () => {
       const solAmountTarget = parseFloat(getFinalSolPrice());
       const lamportsToPay = Math.floor(solAmountTarget * 1e9); 
       
-      // 1. USA L'RPC PRIVATO (Invece di quello pubblico che va in blocco)
-      // Assicurati di avere VITE_HELIUS_RPC nel tuo file .env
       const rpcUrl = import.meta.env.VITE_HELIUS_RPC || "https://api.mainnet-beta.solana.com";
       const directConnection = new Connection(rpcUrl, 'confirmed');
       
-      // 2. CONTROLLO SALDO E GAS FEES
       const userBalance = await directConnection.getBalance(publicKey);
       const networkFeeBase = 5000; 
       
@@ -108,7 +106,6 @@ const Pricing = () => {
         return;
       }
 
-      // 3. TRANSAZIONE (Se questo fallisce ora, vedrai l'errore in console)
       const { blockhash, lastValidBlockHeight } = await directConnection.getLatestBlockhash('confirmed');
 
       const transaction = new Transaction({
@@ -122,37 +119,55 @@ const Pricing = () => {
         })
       );
 
-      // 4. APERTURA PHANTOM
       const signature = await sendTransaction(transaction, directConnection);
 
-      // 5. CONFERMA ON-CHAIN
       await directConnection.confirmTransaction({
         signature,
         blockhash,
         lastValidBlockHeight
       }, 'confirmed');
 
-      const generatedSyncKey = `ms-${checkoutPlan}-${Math.random().toString(36).substr(2, 9)}`;
-      
+      // 🔥 AVVISA IL DATABASE DELLA TRANSAZIONE 🔥
+      const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
+      const verifyResp = await fetch(`${API_URL}/api/verify-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            walletAddress: publicKey.toString(),
+            signature: signature,
+            planType: checkoutPlan,
+            affiliateCode: discountStatus === 'success' ? promoCode.toUpperCase() : null 
+        })
+      });
+
+      const verifyData = await verifyResp.json();
+      if (!verifyResp.ok || !verifyData.success) {
+        throw new Error(verifyData.error || "Server verification error");
+      }
+
+      // Mostriamo la chiave VERA generata dal server a schermo
       setTransactionMessage({ 
         type: 'success', 
-        text: `Payment Successful! \nYour Sync Key is: ${generatedSyncKey}\nCopy and save it securely.`
+        text: `Payment Successful!\nYour Sync Key is: ${verifyData.syncKey}\nRedirecting to Dashboard...`
       });
       
+      // Dopo 3 secondi reindirizza l'utente alla dashboard per fargli vedere la chiave lì fissa
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 3500);
+
     } catch (error) {
-      // LOG FONDAMENTALE PER IL DEBUGGING
       console.error("ERRORE DETTAGLIATO TRANSAZIONE:", error);
-      
       if (error.message && error.message.toLowerCase().includes("user rejected")) {
         setTransactionMessage({ type: 'error', text: 'Payment cancelled by user.' });
       } else {
-        // Mostra l'errore reale se non è un rifiuto dell'utente
         setTransactionMessage({ type: 'error', text: `Error: ${error.message || 'Transaction failed.'}` });
       }
     } finally {
       setIsProcessing(false);
     }
   };
+
   return (
     <div className="min-h-screen bg-[#020202] text-gray-200 py-24 px-6 relative overflow-x-hidden">
       

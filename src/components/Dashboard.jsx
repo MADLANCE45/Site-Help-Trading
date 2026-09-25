@@ -13,10 +13,14 @@ export const Dashboard = () => {
   
   // Terminal Typewriter State
   const [typedFeedback, setTypedFeedback] = useState('');
-const handleInstallClick = () => {
+  
+  // --- STATI PER LA SYNC KEY ---
+  const [showKey, setShowKey] = useState(false);
+  const [copyText, setCopyText] = useState('Copy');
+
+  const handleInstallClick = () => {
     const userAgent = navigator.userAgent.toLowerCase();
     const chromeLink = "https://chromewebstore.google.com/detail/solana-pump-radar/mmghnjnoolonhfofffknckldjajjgidk";
-    // Sostituisci questo quando hai il link Firefox
     const firefoxLink = "https://addons.mozilla.org/it/firefox/addon/solana-pump-radar/"; 
 
     if (userAgent.includes("firefox")) {
@@ -25,6 +29,7 @@ const handleInstallClick = () => {
       window.open(chromeLink, '_blank');
     }
   };
+
   useEffect(() => {
     // 1. Gestione Wallet Disconnesso
     if (!publicKey) {
@@ -43,17 +48,17 @@ const handleInstallClick = () => {
 
     const walletAddress = publicKey.toString();
 
-    // 2. Fetch User Data (da Supabase)
+    // 2. Fetch User Data (da Supabase - AGGIUNTO sync_key)
     const fetchUser = async () => {
       try {
         const { data } = await supabase
           .from('users')
-          .select('plan_type, scans_remaining')
+          .select('plan_type, scans_remaining, sync_key') // <-- Carichiamo la chiave!
           .eq('wallet_address', walletAddress)
           .single();
-        setUserData(data || { plan_type: 'free', scans_remaining: 5 });
+        setUserData(data || { plan_type: 'free', scans_remaining: 5, sync_key: null });
       } catch (err) {
-        setUserData({ plan_type: 'free', scans_remaining: 0 });
+        setUserData({ plan_type: 'free', scans_remaining: 0, sync_key: null });
       }
     };
 
@@ -61,14 +66,10 @@ const handleInstallClick = () => {
     const fetchWalletAudit = async () => {
       setIsLoadingAudit(true);
       try {
-        // CORREZIONE URL DINAMICO
         const API_URL = import.meta.env.VITE_API_URL || 'https://help-trading-production.up.railway.app';
         
-        // Timeout di sicurezza per non far aspettare troppo l'utente
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s
-
-        console.log(`Calling backend: ${API_URL}/api/wallet-audit/${walletAddress}`);
+        const timeoutId = setTimeout(() => controller.abort(), 12000); 
 
         const response = await fetch(`${API_URL}/api/wallet-audit/${walletAddress}`, {
             signal: controller.signal
@@ -79,7 +80,6 @@ const handleInstallClick = () => {
         if (!response.ok) throw new Error("Backend non ha risposto correttamente");
         
         const data = await response.json();
-        console.log("Dati audit ricevuti:", data);
         
         // SMART ENGLISH OVERRIDE
         let englishFeedback = "";
@@ -115,7 +115,6 @@ const handleInstallClick = () => {
         });
 
       } catch (error) {
-        console.error("Audit Fetch Error:", error);
         setAudit({
             score: 0,
             archetype: "Node Offline ❌",
@@ -152,23 +151,24 @@ const handleInstallClick = () => {
     }
   }, [audit, isLoadingAudit]);
 
+  // Funzione Copia Chiave
+  const handleCopyKey = () => {
+    if (userData?.sync_key) {
+      navigator.clipboard.writeText(userData.sync_key);
+      setCopyText('Copied! ✅');
+      setTimeout(() => setCopyText('Copy'), 3000);
+    }
+  };
 
-  // 🚀 RISOLUZIONE: DEFINIAMO safeScore E scoreColor PRIMA DEL JSX 🚀
-
-  // 1. safeScore: derivato dallo stato audit o default a 0
   const safeScore = audit?.score || 0;
-
-  // 2. Gestione Colori Robusta
-  let scoreColor = '#333'; // Grigio di default se disconnesso o in loading
+  let scoreColor = '#333'; 
 
   if (publicKey && !isLoadingAudit && audit) {
-      // Se il server è offline, non diamo un feedback di colore sul wallet, ma un grigio neutro o rosso scuro
       if (audit.archetype.includes("Node Offline")) {
-          scoreColor = '#ff4d4d'; // Rosso scuro per errore server
+          scoreColor = '#ff4d4d'; 
       } else if (audit.archetype.includes("Disconnected")) {
           scoreColor = '#333';
       } else {
-          // Colori basati sullo score vero
           scoreColor = safeScore >= 75 ? '#00e676' : (safeScore >= 45 ? '#ffaa00' : '#ff4d4d');
       }
   }
@@ -176,7 +176,6 @@ const handleInstallClick = () => {
   const planType = userData?.plan_type || 'free';
 
   return (
-    // FIX: Rimosso overflow-hidden, aggiunta min-h-screen e padding-bottom
     <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-8 min-h-screen pb-20"> 
       
       {/* HEADER */}
@@ -223,6 +222,44 @@ const handleInstallClick = () => {
         </div>
       </div>
 
+      {/* SYNC KEY BOX (Appare solo se l'utente è PRO o PREMIUM) */}
+      {(planType === 'pro' || planType === 'premium' || planType === 'admin') && userData?.sync_key && (
+        <div className={`bg-[#0a0a0a] border ${planType === 'premium' ? 'border-purple-500/30' : 'border-emerald-500/30'} p-5 rounded-2xl relative shadow-xl`}>
+          <div className={`text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2 ${planType === 'premium' ? 'text-purple-400' : 'text-emerald-400'}`}>
+            <span>🔑 Extension Sync Key</span>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <input 
+                  type={showKey ? "text" : "password"} 
+                  readOnly 
+                  value={userData.sync_key} 
+                  className="w-full bg-[#050505] border border-[#333] text-white font-mono text-sm px-4 py-3 rounded-xl outline-none pr-12 tracking-widest shadow-inner"
+                />
+                <button 
+                  onClick={() => setShowKey(!showKey)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                  aria-label={showKey ? "Hide key" : "Show key"}
+                >
+                  {showKey ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  )}
+                </button>
+              </div>
+              
+              <button 
+                onClick={handleCopyKey}
+                className={`px-6 py-3 rounded-xl font-black text-sm text-black transition-all min-w-[120px] ${planType === 'premium' ? 'bg-purple-500 hover:bg-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-emerald-400 hover:bg-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]'}`}
+              >
+                {copyText}
+              </button>
+          </div>
+          <p className="text-[10px] text-gray-500 mt-3 uppercase tracking-wider">Paste this key in the Meme Saver browser extension to unlock {planType} features.</p>
+        </div>
+      )}
+
       {/* WALLET HEALTH & ON-CHAIN AUDIT CARD */}
       <div className={`bg-gradient-to-b from-[#0a0a0a] to-[#050505] border ${publicKey ? 'border-[#222]' : 'border-rose-500/20'} rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden transition-colors`}>
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[100px] rounded-full pointer-events-none"></div>
@@ -255,7 +292,6 @@ const handleInstallClick = () => {
               <div 
                 className="w-32 h-32 rounded-full flex items-center justify-center relative shadow-2xl transition-all duration-1000"
                 style={{
-                  // 🔥 safeScore e scoreColor sono ora accessibili! 🔥
                   background: publicKey ? `conic-gradient(${scoreColor} ${safeScore}%, #111 0)` : '#111',
                   boxShadow: publicKey ? `0 0 40px ${scoreColor}30` : 'none'
                 }}
@@ -334,7 +370,6 @@ const handleInstallClick = () => {
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           
-          {/* 👇 2. BOTTONE AGGIORNATO CON L'AZIONE CLICK 👇 */}
           <button 
             onClick={handleInstallClick}
             className="w-full sm:w-auto px-6 py-3.5 bg-white text-black font-black text-sm rounded-xl hover:bg-gray-200 hover:-translate-y-0.5 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2"
