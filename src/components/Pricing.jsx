@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
-// import { supabase } from '../supabaseClient'; 
-
+import { PublicKey, SystemProgram, Transaction, Connection } from '@solana/web3.js';// import { supabase } from '../supabaseClient'; 
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 const Pricing = () => {
   const navigate = useNavigate();
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
+  const { setVisible } = useWalletModal();
   
   // --- STATI DEL CHECKOUT ---
   const [checkoutPlan, setCheckoutPlan] = useState(null);
@@ -79,8 +79,9 @@ const Pricing = () => {
   const handlePayment = async () => {
     setTransactionMessage({ type: null, text: '' });
 
+    // SE NON È CONNESSO, APRE IL POPUP DI PHANTOM AUTOMATICAMENTE
     if (!publicKey) {
-      setTransactionMessage({ type: 'error', text: 'Please connect your Phantom Wallet first.' });
+      setVisible(true); 
       return;
     }
 
