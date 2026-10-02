@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom';
 
 const Docs = () => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState('intro');
+  const [activeSection, setActiveSection] = useState('architecture');
 
   const sections = [
-    { id: 'intro', title: '1. Introduction' },
-    { id: 'engine', title: '2. Core Engine' },
-    { id: 'threats', title: '3. Threat Detection' },
-    { id: 'interface', title: '4. Interface & Tools' },
-    { id: 'security', title: '5. Infrastructure' },
-    { id: 'faq', title: '6. Glossary & FAQ' },
+    { id: 'architecture', title: '1. Forensic Architecture' },
+    { id: 'matrix', title: '2. Trust Score Matrix' },
+    { id: 'metrics', title: '3. Algorithmic Metrics' },
+    { id: 'pillars', title: '4. The Four Pillars' },
+    { id: 'faq', title: '5. Technical FAQ' },
   ];
 
   const scrollToSection = (id) => {
@@ -25,7 +24,7 @@ const Docs = () => {
   return (
     <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-emerald-500/30">
       
-      {/* NAVBAR SEMPLIFICATA PER DOCS */}
+      {/* NAVBAR */}
       <nav className="sticky top-0 w-full bg-[#050505]/90 backdrop-blur-2xl border-b border-white/5 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
@@ -66,165 +65,174 @@ const Docs = () => {
         {/* MAIN CONTENT */}
         <main className="flex-1 max-w-3xl space-y-20 pb-32">
           
-          {/* 1. Introduction */}
-          <section id="intro" className="scroll-mt-24 space-y-6">
-            <h1 className="text-4xl font-black text-white tracking-tight border-b border-white/10 pb-4">1. Introduction</h1>
+          {/* 1. Forensic Architecture (Definition-First) */}
+          <section id="architecture" className="scroll-mt-24 space-y-6">
+            <h1 className="text-4xl font-black text-white tracking-tight border-b border-white/10 pb-4">1. On-Chain Forensic Architecture</h1>
             
             <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">What is Meme Saver?</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                Meme Saver is an institutional-grade quantitative trading terminal and forensic overlay designed specifically for the Solana ecosystem. It operates directly within your browser, transforming standard charting platforms (like DexScreener and Pump.fun) into a high-frequency, anti-manipulation command center. By bypassing visually delayed chart indicators, Meme Saver provides traders with real-time, on-chain execution data to identify organic momentum and filter out malicious actors.
+              <p className="text-gray-300 leading-relaxed font-light text-lg">
+                The Meme Saver Trust Score is a 0–100 algorithmic heuristic measuring token survivability based on Supply Integrity, Developer History, Sybil Resistance, and Micro-Dump velocity directly via high-frequency Solana RPC streams.
               </p>
             </div>
             
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">The Philosophy: Beyond the Chart</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                Traditional charts are lagging indicators. By the time a green candle prints on a screen, algorithmic bots and insiders have already executed their distribution strategies. Meme Saver is built on the principle that true market intent is hidden within the raw transaction flow and early contract deployments. We focus on exposing hidden fees, developer supply hoarding, and artificial volume before they impact retail liquidity.
-              </p>
-            </div>
-
-            <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl">
-              <h3 className="text-lg font-bold text-white mb-4 uppercase tracking-widest text-sm">Getting Started</h3>
+            <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl mt-6">
+              <h3 className="text-lg font-bold text-white mb-4 uppercase tracking-widest text-sm">Deployment & Configuration</h3>
               <ul className="space-y-3">
                 <li className="flex gap-3 text-gray-400 text-sm font-light">
                   <span className="text-emerald-500 font-black">1.</span> 
-                  <span><b>Installation:</b> Deploy the Meme Saver extension to your Chromium-based browser.</span>
+                  <span><b>Installation:</b> Deploy the Meme Saver extension to your Chromium-based browser to activate the Pump.fun and DexScreener overlay.</span>
                 </li>
                 <li className="flex gap-3 text-gray-400 text-sm font-light">
                   <span className="text-emerald-500 font-black">2.</span> 
-                  <span><b>Account Synchronization:</b> Securely link your extension to your Web Account via your unique Sync Key to unlock premium inference models.</span>
+                  <span><b>Synchronization:</b> Link the extension to your Web Account via the Dashboard Sync Key to unlock deep-scan forensics.</span>
                 </li>
                 <li className="flex gap-3 text-gray-400 text-sm font-light">
                   <span className="text-emerald-500 font-black">3.</span> 
-                  <span><b>RPC Node Configuration:</b> Connect a dedicated custom RPC endpoint (e.g., Helius) in the Control Room to guarantee throttling-free, zero-latency data ingestion.</span>
+                  <span><b>RPC Node:</b> Connect a dedicated RPC endpoint to guarantee zero-latency execution against Jito bundle manipulation.</span>
                 </li>
               </ul>
             </div>
           </section>
 
-          {/* 2. Core Engine */}
-          <section id="engine" className="scroll-mt-24 space-y-6">
-            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">2. Core Engine: Hybrid Forensics</h2>
+          {/* 2. Trust Score Matrix */}
+          <section id="matrix" className="scroll-mt-24 space-y-6">
+            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">2. Understanding the 0–100 Trust Score Matrix</h2>
+            <p className="text-gray-400 leading-relaxed font-light">
+              The terminal operates on zero subjective indicators. Every evaluation reflects quantitative data parsed in real time. The Trust Score ranges from 0 (Artificial Trap) to 100 (Organic Flow).
+            </p>
             
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">Dynamic Weighted Algorithm</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                Meme Saver does not rely on a single point of failure. The analytical engine utilizes a proprietary hybrid matrix that synthesizes historical contract forensics (Static Analysis) with real-time liquidity dynamics (Live Order Flow). This ensures that a historically dangerous token cannot disguise itself behind a temporary spike in buy volume.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">On-Chain History Analysis</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                Upon initialization, the engine conducts a comprehensive background check on the token's origin. This includes developer wallet profiling, historical rug-pull signatures, and the identification of initial supply hoarding (Bundle Risks). The system evaluates the true decentralization of the top holders to determine if the liquidity pool is susceptible to a unilateral drain.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">Real-Time Order Flow Parsing</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                The terminal establishes a direct WebSocket connection to the blockchain, bypassing third-party API delays. It calculates volumetric pressure in milliseconds, categorizing incoming capital as retail flow, smart money, or algorithmic MEV execution.
-              </p>
-            </div>
-          </section>
-
-          {/* 3. Threat Detection */}
-          <section id="threats" className="scroll-mt-24 space-y-6">
-            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">3. Threat Detection Systems</h2>
-            
-            <div className="grid gap-4">
-              <div className="bg-[#0a0a0a] border border-rose-500/20 p-5 rounded-xl border-l-4 border-l-rose-500">
-                <h3 className="text-lg font-bold text-white mb-2">Bundle Pump Protection (Anti-FOMO Filter)</h3>
-                <p className="text-gray-400 text-sm leading-relaxed font-light">
-                  Malicious actors frequently utilize orchestrated bot networks to inject massive, simultaneous buy orders, creating the illusion of extreme bullish momentum. Meme Saver utilizes high-frequency volume velocity heuristics to detect these artificial spikes. When overbought anomalies are identified, the system instantly downgrades the tactical score, issuing an alert to prevent traders from becoming exit liquidity during the subsequent dump.
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="bg-[#0a0a0a] border border-rose-500/30 p-5 rounded-xl">
+                <span className="text-xs font-mono font-bold text-rose-400 uppercase tracking-widest block mb-2">Score ≤ 35</span>
+                <h3 className="text-lg font-bold text-white mb-1">AVOID / TRAP</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Critical danger. Indicates fresh disposable developer wallets (&lt; 24h), heavy Jito bundled supply (&gt; 20%), or malicious contracts. Extreme probability of total loss.
                 </p>
               </div>
-
-              <div className="bg-[#0a0a0a] border border-amber-500/20 p-5 rounded-xl border-l-4 border-l-amber-500">
-                <h3 className="text-lg font-bold text-white mb-2">Micro-Dumping & Sybil Detection</h3>
-                <p className="text-gray-400 text-sm leading-relaxed font-light">
-                  Sophisticated developers often distribute their tokens across dozens of unlinked wallets (Sybil Attack) to sell off assets in micro-fractions, bleeding the liquidity pool without triggering massive red candles on the chart. Meme Saver’s Event-Driven Multi-Agent Architecture monitors concurrent micro-transactions across the network, flagging coordinated sell-offs that traditional scanners miss.
+              <div className="bg-[#0a0a0a] border border-amber-500/30 p-5 rounded-xl">
+                <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest block mb-2">Score 36 – 65</span>
+                <h3 className="text-lg font-bold text-white mb-1">SCALP / CHOP</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Manipulated territory. Wash-trading, developer staircase patterns, or concentrated supply clusters holding steady. High risk of sudden distribution.
                 </p>
               </div>
-
-              <div className="bg-[#0a0a0a] border border-purple-500/20 p-5 rounded-xl border-l-4 border-l-purple-500">
-                <h3 className="text-lg font-bold text-white mb-2">Vampire Bleed Alerts</h3>
-                <p className="text-gray-400 text-sm leading-relaxed font-light">
-                  If the underlying organic buy pressure collapses unexpectedly while the price remains artificially elevated, the background monitoring agents will deploy a "Vampire Alert." This indicates that the primary manipulator has ceased supporting the floor price and is actively distributing holdings to late buyers.
+              <div className="bg-[#0a0a0a] border border-emerald-500/30 p-5 rounded-xl">
+                <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest block mb-2">Score ≥ 66</span>
+                <h3 className="text-lg font-bold text-white mb-1">RIDE / MOMENTUM</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Organic market mechanics. Independent top holders, clean developer history, distributed token holdings, and sustainable buy pressure on the bonding curve.
                 </p>
               </div>
             </div>
           </section>
 
-          {/* 4. Interface & Tools */}
-          <section id="interface" className="scroll-mt-24 space-y-6">
-            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">4. Interface & Tools</h2>
+          {/* 3. Algorithmic Metrics */}
+          <section id="metrics" className="scroll-mt-24 space-y-6">
+            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">3. Algorithmic Risk Metrics & Thresholds</h2>
             
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">The Tactical Hologram HUD</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                A zero-latency, draggable tactical overlay that floats directly on your charting interface. It provides an immediate, synthesized verdict (RIDE, SCALP, or AVOID) alongside a precise Trust Score. The HUD includes a localized RE-SCAN engine, allowing traders to recalculate the hybrid matrix instantly based on shifting order flow without triggering rate limits.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">Live Tape & Order Flow Visualization</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                The Control Deck features a split-second visual representation of market momentum. The Order Flow bar dynamically tracks the ratio of inbound versus outbound liquidity. The Live Tape categorizes transactions using institutional tagging, separating standard retail trades from coordinated bundles and whale-sized executions.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">Smart Money Wallet Tracker & Spy Radar</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                Traders can input specific wallet addresses into the Tracker to monitor key market participants. The Spy Radar operates as a background sentry, pushing non-intrusive, real-time alerts to the interface the moment a tracked entity (or a known malicious wallet) executes a transaction on the viewed contract.
-              </p>
+            <div className="overflow-x-auto mt-4">
+              <table className="w-full text-left text-sm border border-[#222] rounded-xl overflow-hidden">
+                <thead className="bg-[#111] text-gray-400 font-mono text-xs uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4 border-b border-[#222]">Metric</th>
+                    <th className="p-4 border-b border-[#222]">Range</th>
+                    <th className="p-4 border-b border-[#222]">Critical Threshold</th>
+                    <th className="p-4 border-b border-[#222]">Algorithmic Logic</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#222] bg-[#050505]">
+                  <tr>
+                    <td className="p-4 font-bold text-white">Supply Integrity</td>
+                    <td className="p-4 font-mono text-gray-400">0 – 100%</td>
+                    <td className="p-4 text-rose-400 font-mono">&gt; 20% in bundles</td>
+                    <td className="p-4 text-xs text-gray-400">Flags coordinated supply control acquired during Block 0 via Jito tips.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-4 font-bold text-white">Developer Trust</td>
+                    <td className="p-4 font-mono text-gray-400">0 – 100%</td>
+                    <td className="p-4 text-rose-400 font-mono">Wallet age &lt; 24h</td>
+                    <td className="p-4 text-xs text-gray-400">Tracks transaction history across Solana to flag serial hit-and-run burner addresses.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-4 font-bold text-white">Sybil Resistance</td>
+                    <td className="p-4 font-mono text-gray-400">0 – 100%</td>
+                    <td className="p-4 text-rose-400 font-mono">Shared funder ≥ 3 wallets</td>
+                    <td className="p-4 text-xs text-gray-400">Executes reverse graph traversal to find common parent funding wallets or mixer interactions.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-4 font-bold text-white">Micro-Dump Risk</td>
+                    <td className="p-4 font-mono text-gray-400">0 – 100%</td>
+                    <td className="p-4 text-rose-400 font-mono">≥ 3 fractional sells</td>
+                    <td className="p-4 text-xs text-gray-400">Detects gradual liquidity bleed by insiders while artificial buy pressure keeps the chart green.</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </section>
 
-          {/* 5. Infrastructure & Security */}
-          <section id="security" className="scroll-mt-24 space-y-6">
-            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">5. Infrastructure & Security</h2>
+          {/* 4. The Four Pillars */}
+          <section id="pillars" className="scroll-mt-24 space-y-6">
+            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">4. The Four Forensic Pillars</h2>
             
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">Custom RPC Integration</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                For high-frequency execution, standard public nodes are insufficient. The terminal supports direct integration with premium RPC providers. Routing queries through a dedicated node ensures that the Live Tape and Threat Detection systems operate with maximum architectural efficiency.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-emerald-400 mb-2">Client-Side Execution & Privacy</h3>
-              <p className="text-gray-400 leading-relaxed font-light">
-                Meme Saver is engineered for absolute operational security. The extension does not store private keys, and it does not possess the capability to initiate unauthorized transactions. All complex tactical computations, spatial rendering, and multi-agent monitoring protocols are executed locally within the user's browser RAM, ensuring both data privacy and uncompromised rendering speed.
-              </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="bg-[#080808] border border-[#222] p-5 rounded-xl">
+                <h3 className="text-white font-bold mb-2">1. Supply Integrity</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Evaluates top 10 token holder balances against total circulating supply. Detects whether early snipers acquired dominant allocations in block zero through coordinated bundles.
+                </p>
+              </div>
+              <div className="bg-[#080808] border border-[#222] p-5 rounded-xl">
+                <h3 className="text-white font-bold mb-2">2. Developer Trust</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Tracks historical transaction signatures of the creator address to flag serial ruggers, burner deployment wallets, and multi-token dump farms.
+                </p>
+              </div>
+              <div className="bg-[#080808] border border-[#222] p-5 rounded-xl">
+                <h3 className="text-white font-bold mb-2">3. Sybil Resistance</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Performs reverse graph traversal on top holder funding sources to uncover secret parent wallets financing seemingly independent buyers on Pump.fun and Raydium.
+                </p>
+              </div>
+              <div className="bg-[#080808] border border-[#222] p-5 rounded-xl">
+                <h3 className="text-white font-bold mb-2">4. Micro-Dump Velocity</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Measures whether large holders are slowly offloading bags in micro-transactions (&lt; 0.5 SOL / token equivalent) while artificial buy orders create fake green candles.
+                </p>
+              </div>
             </div>
           </section>
 
-          {/* 6. Glossary & FAQ */}
+          {/* 5. Technical FAQ */}
           <section id="faq" className="scroll-mt-24 space-y-6">
-            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">6. Glossary & FAQ</h2>
+            <h2 className="text-3xl font-black text-white tracking-tight border-b border-white/10 pb-4">5. Technical FAQ</h2>
             
             <div className="space-y-4">
               <div className="bg-[#0a0a0a] border border-white/5 p-5 rounded-xl">
-                <h3 className="font-bold text-white mb-2">What is a Rug Pull?</h3>
-                <p className="text-gray-400 text-sm font-light leading-relaxed">A malicious maneuver where the developers of a cryptocurrency project suddenly abandon it, either by draining the liquidity pool or selling off a pre-mined, hidden supply, leaving investors with worthless tokens.</p>
+                <h3 className="font-bold text-white mb-2">How does the Meme Saver Trust Score work?</h3>
+                <p className="text-gray-400 text-sm font-light leading-relaxed">
+                  The Trust Score is a 0-100 quantitative evaluation derived from four on-chain factors: Supply Integrity (bundled wallets), Developer History (burner wallet age), Sybil Resistance (shared funding networks), and Micro-Dump Risk (stealth distribution patterns).
+                </p>
               </div>
 
               <div className="bg-[#0a0a0a] border border-white/5 p-5 rounded-xl">
-                <h3 className="font-bold text-white mb-2">How do developers generate Fake Volume?</h3>
-                <p className="text-gray-400 text-sm font-light leading-relaxed">Through "Wash Trading." Developers program bot networks to repeatedly buy and sell the token amongst themselves. This creates the optical illusion of high trading volume and strong market interest, enticing organic retail traders to invest.</p>
+                <h3 className="font-bold text-white mb-2">What does a Trust Score below 35 mean?</h3>
+                <p className="text-gray-400 text-sm font-light leading-relaxed">
+                  A score below 35 indicates extreme risk of capital loss. The token shows signs of a fresh burner deployer, heavy bundled supply, or unverified contract parameters.
+                </p>
+              </div>
+
+              <div className="bg-[#0a0a0a] border border-white/5 p-5 rounded-xl">
+                <h3 className="font-bold text-white mb-2">How are Jito bundles detected on Pump.fun?</h3>
+                <p className="text-gray-400 text-sm font-light leading-relaxed">
+                  The terminal inspects transaction block signatures to identify multiple buy orders executed within the exact same block using common tip accounts, flagging artificial early market manipulation.
+                </p>
               </div>
 
               <div className="bg-[#0a0a0a] border border-white/5 p-5 rounded-xl">
                 <h3 className="font-bold text-white mb-2">What is a Sybil Attack in crypto trading?</h3>
-                <p className="text-gray-400 text-sm font-light leading-relaxed">In tokenomics, a Sybil Attack occurs when a single entity generates a large number of pseudonymous wallets to covertly hold a massive percentage of the token supply. This makes the holder distribution look healthy and decentralized, hiding the fact that one person controls the market.</p>
-              </div>
-
-              <div className="bg-[#0a0a0a] border border-white/5 p-5 rounded-xl">
-                <h3 className="font-bold text-white mb-2">Why is Meme Saver faster than traditional charting tools?</h3>
-                <p className="text-gray-400 text-sm font-light leading-relaxed">Standard charts rely on aggregating blocks and routing data through multiple third-party servers before rendering a visual candle. Meme Saver connects directly to the transaction stream, parsing the raw data packets locally on your machine milliseconds after they hit the blockchain.</p>
+                <p className="text-gray-400 text-sm font-light leading-relaxed">
+                  In tokenomics, a Sybil Attack occurs when a single entity generates a large number of pseudonymous wallets to covertly hold a massive percentage of the token supply, hiding the fact that one person controls the market.
+                </p>
               </div>
             </div>
           </section>
