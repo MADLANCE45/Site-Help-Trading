@@ -15,6 +15,7 @@ import Leaderboard from './components/Leaderboard';
 import WalletProfile from './components/WalletProfile';
 import Pricing from './components/Pricing';
 import Docs from './components/Docs';
+
 // 🚨 INTERRUTTORE DI MANUTENZIONE PER LA DASHBOARD
 // Lascialo a 'true' finché non risolvi il backend. Mettilo a 'false' per riattivare tutto.
 const IS_DASHBOARD_MAINTENANCE = false;

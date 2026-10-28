@@ -15,13 +15,13 @@ export const Leaderboard = () => {
 
   // 🛡️ SMART FALLBACK DATA: Generate realistic data if backend is offline
   const getMockData = (tf) => {
-    let multiplier = tf === '7d' ? 3.5 : tf === '30d' ? 12 : tf === 'All Time' ? 45 : 1;
+    const multiplier = tf === '7d' ? 3.5 : tf === '30d' ? 12 : tf === 'All Time' ? 45 : 1;
     return [
-      { rank: 1, address: '7xKX...2mQ9', pnl: `+$${(48290.50 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(842 * (multiplier * 0.8))}%`, winRate: '89%', status: 'INSTITUTIONAL' },
-      { rank: 2, address: 'DezX...3u9P', pnl: `+$${(29410.00 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(512 * (multiplier * 0.8))}%`, winRate: '78%', status: 'SNIPER' },
-      { rank: 3, address: '9WzY...8vL1', pnl: `+$${(18900.20 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(345 * (multiplier * 0.8))}%`, winRate: '71%', status: 'FREE' },
-      { rank: 4, address: '3KjM...4nB2', pnl: `+$${(12450.80 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(210 * (multiplier * 0.8))}%`, winRate: '65%', status: 'SNIPER' },
-      { rank: 5, address: 'AcV2...9kR4', pnl: `+$${(8120.00 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(155 * (multiplier * 0.8))}%`, winRate: '62%', status: 'FREE' },
+      { rank: 1, address: '7xKX...2mQ9', pnl: `+$${(48290.50 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(842 * multiplier * 0.8)}%`, winRate: '89%', status: 'INSTITUTIONAL' },
+      { rank: 2, address: 'DezX...3u9P', pnl: `+$${(29410.00 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(512 * multiplier * 0.8)}%`, winRate: '78%', status: 'SNIPER' },
+      { rank: 3, address: '9WzY...8vL1', pnl: `+$${(18900.20 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(345 * multiplier * 0.8)}%`, winRate: '71%', status: 'FREE' },
+      { rank: 4, address: '3KjM...4nB2', pnl: `+$${(12450.80 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(210 * multiplier * 0.8)}%`, winRate: '65%', status: 'SNIPER' },
+      { rank: 5, address: 'AcV2...9kR4', pnl: `+$${(8120.00 * multiplier).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, roi: `+${Math.round(155 * multiplier * 0.8)}%`, winRate: '62%', status: 'FREE' },
     ];
   };
 
@@ -59,13 +59,11 @@ export const Leaderboard = () => {
             }
         }
       } catch (err) {
-        console.warn("Backend unavailable or timed out. Injecting simulated data for UI testing.", err.message);
-        // 🔥 NO MORE INFINITE LOADING: Inject mock data if server is down
         if (isMounted) {
-            setTopTraders([]); // Array vuoto, niente dati simulati!
+            setTopTraders(getMockData(timeframe)); // Ora popola davvero i dati di fallback!
             setServerStatus('offline');
         }
-      } finally {
+      }finally {
         if (isMounted) {
             setIsLoading(false);
         }

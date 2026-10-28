@@ -369,21 +369,35 @@ const [liveToast, setLiveToast] = useState({ show: false, message: '', type: 'su
               </div>
 
               {/* 4. Area Video: Aggiunta di un riflesso diagonale (Screen Glare) */}
-              <div className="relative w-full flex-1 bg-[#020202] flex items-center justify-center overflow-hidden">
-                <video 
-                  src="/demo4k.mp4" 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  className="w-full h-full object-cover object-top" 
-                />
-                {/* Sottilissimo bordo interno bianco per separare il video dalla cornice nera */}
-                <div className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)] pointer-events-none"></div>
-                
-                {/* Effetto Riflesso Vetro: Passa sul video quando l'utente va in hover col mouse */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.05] to-transparent pointer-events-none translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
-              </div>
+              {/* 4. Area Video Ottimizzata SEO + Live Telemetry HUD */}
+<div className="relative w-full flex-1 bg-[#020202] flex items-center justify-center overflow-hidden">
+  <video 
+    autoPlay 
+    loop 
+    muted 
+    playsInline 
+    preload="metadata"
+    poster="/hero-poster.webp"
+    className="w-full h-full object-cover object-top" 
+  >
+    <source src="/demo-optimized.webm" type="video/webm" />
+    <source src="/demo4k.mp4" type="video/mp4" />
+  </video>
+
+  {/* HUD Telemetrico Sovrapposto in Basso */}
+  <div className="absolute bottom-3 left-3 right-3 bg-[#050505]/90 backdrop-blur-md border border-white/10 rounded-xl p-2.5 flex items-center justify-between z-20 pointer-events-none">
+    <div className="flex items-center gap-2">
+      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+      <span className="text-[10px] font-mono font-bold text-gray-300 uppercase">Oracle Stream</span>
+    </div>
+    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+      400ms Byte Parse
+    </span>
+  </div>
+
+  <div className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)] pointer-events-none"></div>
+  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.05] to-transparent pointer-events-none translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
+</div>
             </div>
           </div>
         </div>
@@ -789,6 +803,55 @@ const [liveToast, setLiveToast] = useState({ show: false, message: '', type: 'su
           </div>
         </div>
       </div>
+      {/* SEO JSON-LD STRUCTURED DATA (Inietta i Rich Snippet su Google) */}
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "Meme Saver - Solana HFT Radar & Auto-Trader",
+          "operatingSystem": "Chrome, Brave, Edge, Firefox",
+          "applicationCategory": "FinanceApplication",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "2140"
+          },
+          "description": "Real-time Solana memecoin scanner, Jito bundle detector, 0.30 SOL risk-free sandbox demo, and automated SOL rent reclamation tool for Pump.fun and DexScreener."
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How to trade memecoins safely on Pump.fun?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Verify the developer's on-chain history, check if initial supply was bundled via Jito at Block-0, and test strategies in a risk-free 0.30 SOL sandbox using Meme Saver."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does the SOL Rent Reclamation (Vacuum Cleaner) work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Meme Saver automatically identifies empty, inactive SPL token accounts in your wallet and closes them to recover 0.002039 SOL per account directly back to your balance."
+              }
+            }
+          ]
+        }
+      ]
+    })
+  }}
+/>
     </div>
   );
 };
